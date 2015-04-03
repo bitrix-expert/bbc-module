@@ -18,6 +18,9 @@
       "email": "nik@samokhvalov.info"
     }
   ],
+  "extra": {
+    "installer-name": "bex.bbc"
+  },
   "require": {
     "php":">=5.4.0",
     "composer/installers": "*"
