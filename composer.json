@@ -1,0 +1,25 @@
+{
+  "name": "bitrix-expert/bbc-module",
+  "description": "Module with classes for the basis components",
+  "keywords": ["bitrix", "components", "module"],
+  "homepage": "http://bbc.bitrix.expert",
+  "type": "bitrix-module",
+  "license": "MIT",
+  "support": {
+    "email": "nik@samokhvalov.info",
+    "skype": "nik.samokhvalov",
+    "issues": "https://github.com/bitrix-expert/bbc-module/issues",
+    "source": "http://github.com/bitrix-expert/bbc-module/"
+  },
+  "authors": [
+    {
+      "name": "Nik Samokhvalov",
+      "homepage": "http://samokhvalov.info",
+      "email": "nik@samokhvalov.info"
+    }
+  ],
+  "require": {
+    "php":">=5.4.0",
+    "composer/installers": "*"
+  }
+}
