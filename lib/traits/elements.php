@@ -1,10 +1,6 @@
 <?php
 /**
- * Basis components
- *
- * @package components
- * @subpackage basis
- * @author Nik Samokhvalov <nik@samokhvalov.info>
+ * @link http://bbc.bitrix.expert
  * @copyright Copyright © 2014-2015 Nik Samokhvalov
  * @license MIT
  */
@@ -14,7 +10,11 @@ namespace Bex\Bbc\Traits;
 use Bitrix\Iblock\InheritedProperty;
 use Bitrix\Main\Page\Asset;
 
-
+/**
+ * Class Elements
+ *
+ * @author Nik Samokhvalov <nik@samokhvalov.info>
+ */
 trait Elements
 {
     /**
@@ -30,7 +30,7 @@ trait Elements
     /**
      * @var array Values of global filter
      */
-    private $filterParams = array();
+    private $filterParams = [];
 
     /**
      * @var bool Show include areas
@@ -44,7 +44,7 @@ trait Elements
 
         if ($this->arParams['OG_TAGS_IMAGE'])
         {
-            $this->addParamsSelected(array($this->arParams['OG_TAGS_IMAGE']));
+            $this->addParamsSelected([$this->arParams['OG_TAGS_IMAGE']]);
         }
     }
 
@@ -59,20 +59,20 @@ trait Elements
 
         if ($this->arParams['DISPLAY_BOTTOM_PAGER'] === 'Y' || $this->arParams['DISPLAY_TOP_PAGER'] === 'Y')
         {
-            $this->navStartParams = array(
+            $this->navStartParams = [
                 'nPageSize' => $this->arParams['ELEMENTS_COUNT'],
                 'bDescPageNumbering' => $this->arParams['PAGER_DESC_NUMBERING'],
                 'bShowAll' => $this->arParams['PAGER_SHOW_ALL']
-            );
+            ];
 
             $this->addCacheAdditionalId(\CDBResult::GetNavParams($this->navStartParams));
         }
         elseif ($this->arParams['ELEMENTS_COUNT'] > 0)
         {
-            $this->navStartParams = array(
+            $this->navStartParams = [
                 'nTopCount' => $this->arParams['ELEMENTS_COUNT'],
                 'bDescPageNumbering' => $this->arParams['PAGER_DESC_NUMBERING']
-            );
+            ];
         }
         else
         {
@@ -112,7 +112,7 @@ trait Elements
             $this->arParams['SECTION_ID'] = \CIBlockFindTools::GetSectionID(
                 0,
                 $this->arParams['SECTION_CODE'],
-                array()
+                []
             );
         }
 
@@ -123,7 +123,7 @@ trait Elements
                 $this->arParams['ELEMENT_CODE'],
                 $this->arParams['SECTION_ID'],
                 $this->arParams['SECTION_CODE'],
-                array()
+                []
             );
         }
 
@@ -195,7 +195,7 @@ trait Elements
 
         if (!empty($this->arResult['SEO_TAGS']))
         {
-            $this->setResultCacheKeys(array('SEO_TAGS'));
+            $this->setResultCacheKeys(['SEO_TAGS']);
         }
     }
 
@@ -208,7 +208,7 @@ trait Elements
 
         if ($this->arParams['SECTION_ID'] > 0)
         {
-            $this->arResult['SECTION'] = array('PATH' => array());
+            $this->arResult['SECTION'] = ['PATH' => []];
 
             $rsPath = \CIBlockSection::GetNavChain($this->arParams['IBLOCK_ID'], $this->arParams['SECTION_ID']);
             $rsPath->SetUrlTemplates('', $this->arParams['SECTION_URL'], $this->arParams['IBLOCK_URL']);
@@ -228,7 +228,7 @@ trait Elements
             $this->arResult['SECTION'] = false;
         }
 
-        $this->setResultCacheKeys(array('SECTION'));
+        $this->setResultCacheKeys(['SECTION']);
     }
 
     private function readOgDatas()
@@ -286,7 +286,7 @@ trait Elements
 
         if (!empty($this->arResult['OG_TAGS']))
         {
-            $this->setResultCacheKeys(array('OG_TAGS'));
+            $this->setResultCacheKeys(['OG_TAGS']);
         }
     }
 
@@ -301,10 +301,10 @@ trait Elements
         $prefix = 'http://'.SITE_SERVER_NAME.'/';
 
         $rsShortLink = \CBXShortUri::GetList(
-            array(),
-            array(
+            [],
+            [
                 'URI' => $fullLink
-            )
+            ]
         );
 
         if ($shortLink = $rsShortLink->Fetch())
@@ -315,11 +315,11 @@ trait Elements
         $shortLink = \CBXShortUri::GenerateShortUri();
 
         $id = \CBXShortUri::Add(
-            array(
+            [
                 'URI' => $fullLink,
                 'SHORT_URI' => $shortLink,
                 'STATUS' => '301',
-            )
+            ]
         );
 
         if ($id)
@@ -439,7 +439,7 @@ trait Elements
             $this->arParams['IBLOCK_ID'],
             $this->arResult['ID'],
             $this->arParams['SECTION_ID'],
-            array()
+            []
         );
 
         $this->addIncludeAreaIcons(\CIBlock::GetComponentMenu($APPLICATION->GetPublicShowMode(), $buttons));
@@ -534,7 +534,7 @@ trait Elements
      * @param array $fields
      * @uses groupingParams
      */
-    protected function addParamsGrouping($fields = array())
+    protected function addParamsGrouping($fields = [])
     {
         if (is_array($fields) && !empty($fields))
         {
@@ -548,7 +548,7 @@ trait Elements
      * @param array $params
      * @uses navStartParams
      */
-    protected function addParamsNavStart($params = array())
+    protected function addParamsNavStart($params = [])
     {
         if (is_array($params) && !empty($params))
         {
@@ -581,7 +581,7 @@ trait Elements
      * @param array $additionalFields Additional fields for sorting
      * @return array
      */
-    protected function getParamsSort($additionalFields = array())
+    protected function getParamsSort($additionalFields = [])
     {
         $this->arParams['SORT_BY_1'] = trim($this->arParams['SORT_BY_1']);
 
@@ -605,10 +605,10 @@ trait Elements
             $this->arParams['SORT_ORDER_2'] = 'ASC';
         }
 
-        $fields = array(
+        $fields = [
             $this->arParams['SORT_BY_1'] => $this->arParams['SORT_ORDER_1'],
             $this->arParams['SORT_BY_2'] => $this->arParams['SORT_ORDER_2']
-        );
+        ];
 
         if (is_array($additionalFields) && !empty($additionalFields))
         {
@@ -631,7 +631,7 @@ trait Elements
      * @param array $additionalFields
      * @return array
      */
-    protected function getParamsFilters($additionalFields = array())
+    protected function getParamsFilters($additionalFields = [])
     {
         if (is_array($additionalFields) && !empty($additionalFields))
         {
@@ -648,7 +648,7 @@ trait Elements
      * @uses groupingParams
      * @return array|bool
      */
-    protected function getParamsGrouping($additionalFields = array())
+    protected function getParamsGrouping($additionalFields = [])
     {
         if (!empty($additionalFields))
         {
@@ -665,7 +665,7 @@ trait Elements
      * @uses navStartParams
      * @return array|bool
      */
-    protected function getParamsNavStart($additionalFields = array())
+    protected function getParamsNavStart($additionalFields = [])
     {
         if (!empty($additionalFields))
         {
@@ -682,14 +682,14 @@ trait Elements
      * @param string $propsPrefix Prefix for properties keys
      * @return array
      */
-    protected function getParamsSelected($additionalFields = array(), $propsPrefix = 'PROPERTY_')
+    protected function getParamsSelected($additionalFields = [], $propsPrefix = 'PROPERTY_')
     {
-        $fields = array(
+        $fields = [
             'ID',
             'IBLOCK_ID',
             'IBLOCK_SECTION_ID',
             'NAME'
-        );
+        ];
 
         if (!empty($this->arParams['SELECT_FIELDS']))
         {

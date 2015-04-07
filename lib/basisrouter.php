@@ -1,10 +1,6 @@
 <?php
 /**
- * Basis components
- *
- * @package components
- * @subpackage basis
- * @author Nik Samokhvalov <nik@samokhvalov.info>
+ * @link http://bbc.bitrix.expert
  * @copyright Copyright © 2014-2015 Nik Samokhvalov
  * @license MIT
  */
@@ -13,9 +9,10 @@ namespace Bex\Bbc;
 
 use Bitrix\Main;
 
-
 /**
  * Abstraction basis router component
+ *
+ * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 abstract class BasisRouter extends \CBitrixComponent
 {
@@ -165,8 +162,7 @@ abstract class BasisRouter extends \CBitrixComponent
     {
         try {
             $this->executeBasis();
-        }
-        catch (\Exception $e)
+        } catch (\Exception $e)
         {
             $this->catchException($e);
         }

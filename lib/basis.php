@@ -1,19 +1,16 @@
 <?php
 /**
- * Basis components
- *
- * @package components
- * @subpackage basis
- * @author Nik Samokhvalov <nik@samokhvalov.info>
+ * @link http://bbc.bitrix.expert
  * @copyright Copyright © 2014-2015 Nik Samokhvalov
  * @license MIT
  */
 
 namespace Bex\Bbc;
 
-
 /**
  * Abstraction basis component
+ *
+ * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 abstract class Basis extends \CBitrixComponent
 {
@@ -133,8 +130,7 @@ abstract class Basis extends \CBitrixComponent
     {
         try {
             $this->executeBasis();
-        }
-        catch (\Exception $e)
+        } catch (\Exception $e)
         {
             $this->catchException($e);
         }

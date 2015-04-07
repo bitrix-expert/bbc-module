@@ -1,10 +1,6 @@
 <?php
 /**
- * Basis components
- *
- * @package components
- * @subpackage basis
- * @author Nik Samokhvalov <nik@samokhvalov.info>
+ * @link http://bbc.bitrix.expert
  * @copyright Copyright © 2014-2015 Nik Samokhvalov
  * @license MIT
  */
@@ -15,12 +11,12 @@ use Bitrix\Main;
 use Bitrix\Main\Application;
 use Bitrix\Main\Localization\Loc;
 
-
 Loc::loadMessages(__FILE__);
-
 
 /**
  * Common main trait for all basis components
+ *
+ * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 trait Common
 {
