@@ -57,7 +57,7 @@ class ComponentParameters
      * @return array Array for use in variable $arComponentParameters in the .parameters.php
      * @throws \Bitrix\Main\LoaderException
      */
-    public static function getParameters($component, $prepareParams = [], array $arCurrentValues, $selectOnlyListed = false)
+    public static function getParameters($component, $prepareParams = [], $arCurrentValues, $selectOnlyListed = false)
     {
         $additionalComponentParams = [];
 
