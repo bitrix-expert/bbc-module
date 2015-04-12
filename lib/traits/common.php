@@ -72,7 +72,7 @@ trait Common
      * @uses $this->needModules
      * @throws \Bitrix\Main\LoaderException
      */
-    protected function includeModules()
+    public function includeModules()
     {
         if (empty($this->needModules))
         {
@@ -224,7 +224,7 @@ trait Common
      *
      * @return bool
      */
-    protected function startCache()
+    public function startCache()
     {
         global $USER;
 
@@ -256,7 +256,7 @@ trait Common
     /**
      * Write cache to disk
      */
-    protected function writeCache()
+    public function writeCache()
     {
         $this->endResultCache();
     }
@@ -264,7 +264,7 @@ trait Common
     /**
      * Resets the cache
      */
-    protected function abortCache()
+    public function abortCache()
     {
         $this->abortResultCache();
     }
@@ -312,7 +312,7 @@ trait Common
      *
      * @uses $this->templatePage
      */
-    protected function returnDatas()
+    public function returnDatas()
     {
         $this->includeComponentTemplate($this->templatePage);
     }
@@ -337,7 +337,7 @@ trait Common
      * @param \Exception|null|false $exception Exception which will be throwing or "false" what not throwing exceptions. Default — throw new \Exception()
      * @throws \Exception
      */
-    protected function return404($notifier = false, \Exception $exception = null)
+    public function return404($notifier = false, \Exception $exception = null)
     {
         @define('ERROR_404', 'Y');
         \CHTTP::SetStatus('404 Not Found');
@@ -490,7 +490,7 @@ trait Common
      *
      * @param mixed $id
      */
-    protected function addCacheAdditionalId($id)
+    public function addCacheAdditionalId($id)
     {
         $this->cacheAdditionalId[] = $id;
     }

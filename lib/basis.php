@@ -19,7 +19,7 @@ abstract class Basis extends \CBitrixComponent
     /**
      * @var bool Auto executing methods of prolog / epilog in the traits
      */
-    protected $traitsAutoExecute = true;
+    public $traitsAutoExecute = true;
 
     /**
      * @var array Used traits
@@ -92,7 +92,7 @@ abstract class Basis extends \CBitrixComponent
         }
     }
 
-    final public function executeBasis()
+    final protected function executeBasis()
     {
         $this->readUsedTraits();
         $this->includeModules();

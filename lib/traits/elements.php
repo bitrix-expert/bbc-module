@@ -35,7 +35,7 @@ trait Elements
     /**
      * @var bool Show include areas
      */
-    protected $showEditButtons = true;
+    public $showEditButtons = true;
 
     protected function executePrologElements()
     {
@@ -85,7 +85,7 @@ trait Elements
      *
      * @param object $result \CIBlockResult
      */
-    protected function generateNav($result)
+    public function generateNav($result)
     {
         /**
          * @global object $navComponentObject
@@ -132,7 +132,7 @@ trait Elements
         $this->readOgDatas();
     }
 
-    private function readInheritedProps()
+    protected function readInheritedProps()
     {
         if ($this->arParams['SET_SEO_TAGS'] !== 'Y' || !$this->arParams['IBLOCK_ID'])
         {
@@ -199,7 +199,7 @@ trait Elements
         }
     }
 
-    private function readSectionParams()
+    protected function readSectionParams()
     {
         if ($this->arResult['IBLOCK_SECTION_ID'])
         {
@@ -231,7 +231,7 @@ trait Elements
         $this->setResultCacheKeys(['SECTION']);
     }
 
-    private function readOgDatas()
+    protected function readOgDatas()
     {
         global $APPLICATION;
 
@@ -458,7 +458,7 @@ trait Elements
     /**
      * Getting global filter and write his to component parameters
      */
-    private function setParamsFilters()
+    protected function setParamsFilters()
     {
         if ($this->arParams['IBLOCK_TYPE'])
         {
@@ -519,7 +519,7 @@ trait Elements
      *
      * @param array $fields
      */
-    protected function addGlobalFilters(array $fields)
+    public function addGlobalFilters(array $fields)
     {
         if (is_array($fields) && !empty($fields))
         {
@@ -534,7 +534,7 @@ trait Elements
      * @param array $fields
      * @uses groupingParams
      */
-    protected function addParamsGrouping($fields = [])
+    public function addParamsGrouping($fields = [])
     {
         if (is_array($fields) && !empty($fields))
         {
@@ -548,7 +548,7 @@ trait Elements
      * @param array $params
      * @uses navStartParams
      */
-    protected function addParamsNavStart($params = [])
+    public function addParamsNavStart($params = [])
     {
         if (is_array($params) && !empty($params))
         {
@@ -562,7 +562,7 @@ trait Elements
      * @param array $fields
      * @param array $props
      */
-    protected function addParamsSelected($fields = null, $props = null)
+    public function addParamsSelected($fields = null, $props = null)
     {
         if (is_array($fields) && !empty($fields))
         {
@@ -581,7 +581,7 @@ trait Elements
      * @param array $additionalFields Additional fields for sorting
      * @return array
      */
-    protected function getParamsSort($additionalFields = [])
+    public function getParamsSort($additionalFields = [])
     {
         $this->arParams['SORT_BY_1'] = trim($this->arParams['SORT_BY_1']);
 
@@ -631,7 +631,7 @@ trait Elements
      * @param array $additionalFields
      * @return array
      */
-    protected function getParamsFilters($additionalFields = [])
+    public function getParamsFilters($additionalFields = [])
     {
         if (is_array($additionalFields) && !empty($additionalFields))
         {
@@ -642,30 +642,13 @@ trait Elements
     }
 
     /**
-     * Returns array with group parameters for uses in \CIBlock...::GetList()
-     *
-     * @param array $additionalFields
-     * @uses groupingParams
-     * @return array|bool
-     */
-    protected function getParamsGrouping($additionalFields = [])
-    {
-        if (!empty($additionalFields))
-        {
-            $this->addParamsGrouping($additionalFields);
-        }
-
-        return $this->groupingParams;
-    }
-
-    /**
      * Returns array with pagination parameters for uses in \CIBlock...::GetList()
      *
      * @param array $additionalFields
      * @uses navStartParams
      * @return array|bool
      */
-    protected function getParamsNavStart($additionalFields = [])
+    public function getParamsNavStart($additionalFields = [])
     {
         if (!empty($additionalFields))
         {
@@ -676,13 +659,30 @@ trait Elements
     }
 
     /**
+     * Returns array with group parameters for uses in \CIBlock...::GetList()
+     *
+     * @param array $additionalFields
+     * @uses groupingParams
+     * @return array|bool
+     */
+    public function getParamsGrouping($additionalFields = [])
+    {
+        if (!empty($additionalFields))
+        {
+            $this->addParamsGrouping($additionalFields);
+        }
+
+        return $this->groupingParams;
+    }
+
+    /**
      * Returns array with selected fields and properties for uses in \CIBlock...::GetList()
      *
      * @param array $additionalFields Additional fields
      * @param string $propsPrefix Prefix for properties keys
      * @return array
      */
-    protected function getParamsSelected($additionalFields = [], $propsPrefix = 'PROPERTY_')
+    public function getParamsSelected($additionalFields = [], $propsPrefix = 'PROPERTY_')
     {
         $fields = [
             'ID',
@@ -723,7 +723,7 @@ trait Elements
         return array_unique($fields);
     }
 
-    protected function getProcessingMethod()
+    public function getProcessingMethod()
     {
         if ($this->arParams['RESULT_PROCESSING_MODE'] === 'EXTENDED')
         {
@@ -741,7 +741,7 @@ trait Elements
      * @param \CIBlockResult $element
      * @return array
      */
-    private function processingElementsResult($element)
+    protected function processingElementsResult($element)
     {
         $arElement = $element;
 
@@ -798,7 +798,7 @@ trait Elements
      * @param \CIBlockResult $element Result element fields
      * @return bool
      */
-    protected function prepareElementsResult($element)
+    public function prepareElementsResult($element)
     {
         return $element;
     }
