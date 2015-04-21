@@ -39,16 +39,27 @@ abstract class BasisRouter extends \CBitrixComponent
     protected $defaultSefPage = 'list';
 
     /**
+     * @var string Value of the parameter `SEF_FOLDER`
+     */
+    protected $sefFolder;
+
+    protected $urlTemplates;
+
+    protected $variables;
+
+    protected $variableAliases;
+
+    /**
      * Set default parameters for SEF URL's
      */
     protected function setSefDefaultParams()
     {
-        $this->defaultUrlTemplates404 = array(
+        $this->defaultUrlTemplates404 = [
             'list' => '',
             'detail' => '#ELEMENT_ID#/'
-        );
+        ];
 
-        $this->componentVariables = array('ELEMENT_ID');
+        $this->componentVariables = ['ELEMENT_ID'];
     }
 
     /**
@@ -71,11 +82,11 @@ abstract class BasisRouter extends \CBitrixComponent
      */
     protected function setPage()
     {
-        $urlTemplates = array();
+        $urlTemplates = [];
 
         if ($this->arParams['SEF_MODE'] === 'Y')
         {
-            $variables = array();
+            $variables = [];
 
             $urlTemplates = \CComponentEngine::MakeComponentUrlTemplates(
                 $this->defaultUrlTemplates404,
@@ -135,21 +146,31 @@ abstract class BasisRouter extends \CBitrixComponent
             $this->templatePage = $this->defaultPage;
         }
 
-        $this->arResult['FOLDER'] = $this->arParams['SEF_FOLDER'];
-        $this->arResult['URL_TEMPLATES'] = $urlTemplates;
-        $this->arResult['VARIABLES'] = $variables;
-        $this->arResult['ALIASES'] = $variableAliases;
+        $this->sefFolder = $this->arParams['SEF_FOLDER'];
+        $this->urlTemplates = $urlTemplates;
+        $this->variables = $variables;
+        $this->variableAliases = $variableAliases;
+    }
+
+    protected function executeMain()
+    {
+        $this->arResult['FOLDER'] = $this->sefFolder;
+        $this->arResult['URL_TEMPLATES'] = $this->urlTemplates;
+        $this->arResult['VARIABLES'] = $this->variables;
+        $this->arResult['ALIASES'] = $this->variableAliases;
     }
 
     final public function executeBasis()
     {
         $this->includeModules();
+        $this->checkAutomaticParams();
         $this->checkParams();
         $this->startAjax();
-        $this->executeProlog();
 
         $this->setSefDefaultParams();
         $this->setPage();
+        $this->executeProlog();
+
         $this->executeMain();
         $this->returnDatas();
 
