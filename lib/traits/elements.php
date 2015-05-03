@@ -781,6 +781,8 @@ trait Elements
                 }
             }
         }
+        $arElement["PREVIEW_PICTURE"] = (0 < $arElement["PREVIEW_PICTURE"] ? \CFile::GetFileArray($arElement["PREVIEW_PICTURE"]) : false);
+        $arElement["DETAIL_PICTURE"] = (0 < $arElement["DETAIL_PICTURE"] ? \CFile::GetFileArray($arElement["DETAIL_PICTURE"]) : false);
 
         if ($arElement = $this->prepareElementsResult($arElement))
         {
