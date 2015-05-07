@@ -517,13 +517,23 @@ trait Elements
     /**
      * Add new fields to global filter
      *
-     * @param array $fields
+     * @param array $fields Array with fields
+     * @param bool $recursiveMerge If true, $fields will be recursive merged with
+     * other parameters (used array_merge_recursive()), otherwise not recursive merge (used array_merge()).
      */
-    public function addGlobalFilters(array $fields)
+    public function addGlobalFilters(array $fields, $recursiveMerge = false)
     {
         if (is_array($fields) && !empty($fields))
         {
-            $this->filterParams = array_merge_recursive($this->filterParams, $fields);
+            if ($recursiveMerge)
+            {
+                $this->filterParams = array_merge_recursive($this->filterParams, $fields);
+            }
+            else
+            {
+                $this->filterParams = array_merge($this->filterParams, $fields);
+            }
+
             $this->addCacheAdditionalId($fields);
         }
     }
