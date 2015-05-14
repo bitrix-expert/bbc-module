@@ -7,6 +7,7 @@
 
 namespace Bex\Bbc\Traits;
 
+use Bex\Bbc\Elements\ParamsElements;
 use Bitrix\Iblock\InheritedProperty;
 use Bitrix\Main\Page\Asset;
 
@@ -18,65 +19,25 @@ use Bitrix\Main\Page\Asset;
 trait Elements
 {
     /**
-     * @var array|bool Paginator parameters for \CIBlockElement::GetList()
-     */
-    private $navStartParams;
-
-    /**
-     * @var array|bool Group parameters for \CIBlockElement::GetList()
-     */
-    private $groupingParams;
-
-    /**
-     * @var array Values of global filter
-     */
-    private $filterParams = [];
-
-    /**
      * @var bool Show include areas
      */
     public $showEditButtons = true;
 
+    /**
+     * @var \Bex\Bbc\Elements\ParamsElements
+     */
+    protected $paramsElements;
+
     protected function executePrologElements()
     {
-        $this->setNavStartParams();
-        $this->setParamsFilters();
+        $this->paramsElements = new ParamsElements($this);
+
+        $this->paramsElements->setNavStart();
+        $this->paramsElements->setFilters();
 
         if ($this->arParams['OG_TAGS_IMAGE'])
         {
             $this->addParamsSelected([$this->arParams['OG_TAGS_IMAGE']]);
-        }
-    }
-
-    protected function setNavStartParams()
-    {
-        if ($this->arParams['PAGER_SAVE_SESSION'] !== 'Y')
-        {
-            \CPageOption::SetOptionString('main', 'nav_page_in_session', 'N');
-        }
-
-        $this->arParams['PAGER_DESC_NUMBERING'] = $this->arParams['PAGER_DESC_NUMBERING'] === 'Y';
-
-        if ($this->arParams['DISPLAY_BOTTOM_PAGER'] === 'Y' || $this->arParams['DISPLAY_TOP_PAGER'] === 'Y')
-        {
-            $this->navStartParams = [
-                'nPageSize' => $this->arParams['ELEMENTS_COUNT'],
-                'bDescPageNumbering' => $this->arParams['PAGER_DESC_NUMBERING'],
-                'bShowAll' => $this->arParams['PAGER_SHOW_ALL']
-            ];
-
-            $this->addCacheAdditionalId(\CDBResult::GetNavParams($this->navStartParams));
-        }
-        elseif ($this->arParams['ELEMENTS_COUNT'] > 0)
-        {
-            $this->navStartParams = [
-                'nTopCount' => $this->arParams['ELEMENTS_COUNT'],
-                'bDescPageNumbering' => $this->arParams['PAGER_DESC_NUMBERING']
-            ];
-        }
-        else
-        {
-            $this->navStartParams = false;
         }
     }
 
@@ -452,286 +413,6 @@ trait Elements
             {
                 $this->addEditButton($button);
             }
-        }
-    }
-
-    /**
-     * Getting global filter and write his to component parameters
-     */
-    protected function setParamsFilters()
-    {
-        if ($this->arParams['IBLOCK_TYPE'])
-        {
-            $this->filterParams['IBLOCK_TYPE'] = $this->arParams['IBLOCK_TYPE'];
-        }
-
-        if ($this->arParams['IBLOCK_ID'])
-        {
-            $this->filterParams['IBLOCK_ID'] = $this->arParams['IBLOCK_ID'];
-        }
-
-        if ($this->arParams['SECTION_CODE'])
-        {
-            $this->filterParams['SECTION_CODE'] = $this->arParams['SECTION_CODE'];
-        }
-        elseif ($this->arParams['SECTION_ID'])
-        {
-            $this->filterParams['SECTION_ID'] = $this->arParams['SECTION_ID'];
-        }
-
-        if ($this->arParams['INCLUDE_SUBSECTIONS'] === 'Y')
-        {
-            $this->filterParams['INCLUDE_SUBSECTIONS'] = 'Y';
-        }
-
-        if ($this->arParams['ELEMENT_CODE'])
-        {
-            $this->filterParams['CODE'] = $this->arParams['ELEMENT_CODE'];
-        }
-        elseif ($this->arParams['ELEMENT_ID'])
-        {
-            $this->filterParams['ID'] = $this->arParams['ELEMENT_ID'];
-        }
-
-        if ($this->arParams['CHECK_PERMISSIONS'])
-        {
-            $this->filterParams['CHECK_PERMISSIONS'] = $this->arParams['CHECK_PERMISSIONS'];
-        }
-
-        if (!isset($this->filterParams['ACTIVE']))
-        {
-            $this->filterParams['ACTIVE'] = 'Y';
-        }
-
-        if (strlen($this->arParams['EX_FILTER_NAME']) > 0
-            && preg_match("/^[A-Za-z_][A-Za-z01-9_]*$/", $this->arParams['EX_FILTER_NAME'])
-            && is_array($GLOBALS[$this->arParams['EX_FILTER_NAME']])
-        )
-        {
-            $this->filterParams = array_merge_recursive($this->filterParams, $GLOBALS[$this->arParams['EX_FILTER_NAME']]);
-
-            $this->addCacheAdditionalId($GLOBALS[$this->arParams['EX_FILTER_NAME']]);
-        }
-    }
-
-    /**
-     * Add new fields to global filter
-     *
-     * @param array $fields
-     */
-    public function addGlobalFilters(array $fields)
-    {
-        if (is_array($fields) && !empty($fields))
-        {
-            $this->filterParams = array_merge_recursive($this->filterParams, $fields);
-            $this->addCacheAdditionalId($fields);
-        }
-    }
-
-    /**
-     * Add parameters to grouping
-     *
-     * @param array $fields
-     * @uses groupingParams
-     */
-    public function addParamsGrouping($fields = [])
-    {
-        if (is_array($fields) && !empty($fields))
-        {
-            $this->groupingParams = array_merge($this->groupingParams, $fields);
-        }
-    }
-
-    /**
-     * Add parameters to pagination settings
-     *
-     * @param array $params
-     * @uses navStartParams
-     */
-    public function addParamsNavStart($params = [])
-    {
-        if (is_array($params) && !empty($params))
-        {
-            $this->navStartParams = array_merge($this->navStartParams, $params);
-        }
-    }
-
-    /**
-     * Add selected fields and properties to parameters
-     *
-     * @param array $fields
-     * @param array $props
-     */
-    public function addParamsSelected($fields = null, $props = null)
-    {
-        if (is_array($fields) && !empty($fields))
-        {
-            $this->arParams['SELECT_FIELDS'] = array_merge($this->arParams['SELECT_FIELDS'], $fields);
-        }
-
-        if (is_array($props) && !empty($props))
-        {
-            $this->arParams['SELECT_PROPS'] = array_merge($this->arParams['SELECT_PROPS'], $props);
-        }
-    }
-
-    /**
-     * Returns prepare parameters of sort of the component
-     *
-     * @param array $additionalFields Additional fields for sorting
-     * @return array
-     */
-    public function getParamsSort($additionalFields = [])
-    {
-        $this->arParams['SORT_BY_1'] = trim($this->arParams['SORT_BY_1']);
-
-        if (strlen($this->arParams['SORT_BY_1']) <= 0)
-        {
-            $this->arParams['SORT_BY_1'] = 'ACTIVE_FROM';
-        }
-
-        if (!preg_match('/^(asc|desc|nulls)(,asc|,desc|,nulls){0,1}$/i', $this->arParams['SORT_ORDER_1']))
-        {
-            $this->arParams['SORT_ORDER_1'] = 'DESC';
-        }
-
-        if (strlen($this->arParams['SORT_BY_2']) <= 0)
-        {
-            $this->arParams['SORT_BY_2'] = 'SORT';
-        }
-
-        if (!preg_match('/^(asc|desc|nulls)(,asc|,desc|,nulls){0,1}$/i', $this->arParams['SORT_ORDER_2']))
-        {
-            $this->arParams['SORT_ORDER_2'] = 'ASC';
-        }
-
-        $fields = [
-            $this->arParams['SORT_BY_1'] => $this->arParams['SORT_ORDER_1'],
-            $this->arParams['SORT_BY_2'] => $this->arParams['SORT_ORDER_2']
-        ];
-
-        if (is_array($additionalFields) && !empty($additionalFields))
-        {
-            $fields = array_merge($fields, $additionalFields);
-        }
-
-        return $fields;
-    }
-
-    /**
-     * Returns array filters fields for uses in \CIBlock...::GetList().
-     *
-     * Returns array with values global filter and (if is set in $this->arParams)
-     * <ul>
-     * <li> IBLOCK_TYPE
-     * <li> IBLOCK_ID
-     * <li> SECTION_ID
-     * </ul>
-     *
-     * @param array $additionalFields
-     * @return array
-     */
-    public function getParamsFilters($additionalFields = [])
-    {
-        if (is_array($additionalFields) && !empty($additionalFields))
-        {
-            $this->filterParams = array_merge_recursive($this->filterParams, $additionalFields);
-        }
-
-        return $this->filterParams;
-    }
-
-    /**
-     * Returns array with pagination parameters for uses in \CIBlock...::GetList()
-     *
-     * @param array $additionalFields
-     * @uses navStartParams
-     * @return array|bool
-     */
-    public function getParamsNavStart($additionalFields = [])
-    {
-        if (!empty($additionalFields))
-        {
-            $this->addParamsNavStart($additionalFields);
-        }
-
-        return $this->navStartParams;
-    }
-
-    /**
-     * Returns array with group parameters for uses in \CIBlock...::GetList()
-     *
-     * @param array $additionalFields
-     * @uses groupingParams
-     * @return array|bool
-     */
-    public function getParamsGrouping($additionalFields = [])
-    {
-        if (!empty($additionalFields))
-        {
-            $this->addParamsGrouping($additionalFields);
-        }
-
-        return $this->groupingParams;
-    }
-
-    /**
-     * Returns array with selected fields and properties for uses in \CIBlock...::GetList()
-     *
-     * @param array $additionalFields Additional fields
-     * @param string $propsPrefix Prefix for properties keys
-     * @return array
-     */
-    public function getParamsSelected($additionalFields = [], $propsPrefix = 'PROPERTY_')
-    {
-        $fields = [
-            'ID',
-            'IBLOCK_ID',
-            'IBLOCK_SECTION_ID',
-            'NAME'
-        ];
-
-        if (!empty($this->arParams['SELECT_FIELDS']))
-        {
-            foreach ($this->arParams['SELECT_FIELDS'] as $field)
-            {
-                if (trim($field))
-                {
-                    $fields[] = $field;
-                }
-            }
-
-            unset($field);
-        }
-
-        if (!empty($this->arParams['SELECT_PROPS']))
-        {
-            foreach ($this->arParams['SELECT_PROPS'] as $propCode)
-            {
-                if (trim($propCode))
-                {
-                    $fields[] = $propsPrefix.$propCode;
-                }
-            }
-        }
-
-        if (is_array($additionalFields) && !empty($additionalFields))
-        {
-            $fields = array_merge($fields, $additionalFields);
-        }
-
-        return array_unique($fields);
-    }
-
-    public function getProcessingMethod()
-    {
-        if ($this->arParams['RESULT_PROCESSING_MODE'] === 'EXTENDED')
-        {
-            return 'GetNextElement';
-        }
-        else
-        {
-            return 'GetNext';
         }
     }
 
