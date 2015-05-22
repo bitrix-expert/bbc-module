@@ -172,7 +172,7 @@ abstract class BasisRouter extends \CBitrixComponent
         $this->executeProlog();
 
         $this->executeMain();
-        $this->returnDatas();
+        $this->render();
 
         $this->executeEpilog();
         $this->executeFinal();

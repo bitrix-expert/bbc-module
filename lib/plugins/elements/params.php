@@ -5,18 +5,17 @@
  * @license MIT
  */
 
-namespace Bex\Bbc\Elements;
+namespace Bex\Plugins\Elements;
+
+use Bex\Bbc\Plugin\Plugin;
 
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>
+ *
+ * @todo Add .parameters.php
  */
-class ParamsElements
+class ParamsPlugin extends Plugin
 {
-    /**
-     * @var \CBitrixComponent
-     */
-    protected $component;
-
     /**
      * @var array|bool Group parameters for \CIBlockElement::GetList()
      */
@@ -32,9 +31,10 @@ class ParamsElements
      */
     private $navStartParams;
 
-    public function __construct($component)
+    public function executeProlog()
     {
-        $this->component = $component;
+        $this->setNavStart();
+        $this->setFilters();
     }
 
     public function setNavStart()
@@ -74,6 +74,8 @@ class ParamsElements
      */
     public function setFilters()
     {
+        $globalFilter = $GLOBALS[$this->component->arParams['EX_FILTER_NAME']];
+
         if ($this->component->arParams['IBLOCK_TYPE'])
         {
             $this->filterParams['IBLOCK_TYPE'] = $this->component->arParams['IBLOCK_TYPE'];
@@ -119,12 +121,22 @@ class ParamsElements
 
         if (strlen($this->component->arParams['EX_FILTER_NAME']) > 0
             && preg_match("/^[A-Za-z_][A-Za-z01-9_]*$/", $this->component->arParams['EX_FILTER_NAME'])
-            && is_array($GLOBALS[$this->component->arParams['EX_FILTER_NAME']])
+            && is_array($globalFilter)
         )
         {
-            $this->filterParams = array_merge_recursive($this->filterParams, $GLOBALS[$this->component->arParams['EX_FILTER_NAME']]);
+            $this->filterParams = array_merge_recursive($this->filterParams, $globalFilter);
 
-            $this->component->addCacheAdditionalId($GLOBALS[$this->component->arParams['EX_FILTER_NAME']]);
+            /**
+             * @todo Add dependency
+             */
+            if (method_exists($this->component, 'addCacheAdditionalId'))
+            {
+                $this->component->addCacheAdditionalId($globalFilter);
+            }
+            else
+            {
+                $this->component->arParams[$this->component->arParams['EX_FILTER_NAME'].'_VALUE'] = $globalFilter;
+            }
         }
     }
 
@@ -138,7 +150,18 @@ class ParamsElements
         if (is_array($fields) && !empty($fields))
         {
             $this->filterParams = array_merge_recursive($this->filterParams, $fields);
-            $this->component->addCacheAdditionalId($fields);
+
+            /**
+             * @todo Add dependency
+             */
+            if (method_exists($this->component, 'addCacheAdditionalId'))
+            {
+                $this->component->addCacheAdditionalId($fields);
+            }
+            else
+            {
+                $this->component->arParams[$this->component->arParams['EX_FILTER_NAME'].'_VALUE'] += $fields;
+            }
         }
     }
 

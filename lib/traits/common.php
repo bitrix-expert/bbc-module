@@ -21,21 +21,6 @@ Loc::loadMessages(__FILE__);
 trait Common
 {
     /**
-     * @var string File name of log with last exception
-     */
-    protected $exceptionLog = 'exception.log';
-
-    /**
-     * @var bool Sending notifications to admin email
-     */
-    protected $exceptionNotifier = true;
-
-    /**
-     * @var array The codes of modules that will be connected when performing component
-     */
-    protected $needModules = array();
-
-    /**
      * @var array Additional cache ID
      */
     private $cacheAdditionalId;
@@ -59,104 +44,6 @@ trait Common
      * @var string Template page name
      */
     protected $templatePage;
-
-    /**
-     * @var array List keys from $this->arParams for checking
-     * @example $checkParams = array('IBLOCK_TYPE' => array('type' => 'string'), 'ELEMENT_ID' => array('type' => 'int', 'error' => '404'));
-     */
-    protected $checkParams = array();
-
-    /**
-     * Include modules
-     *
-     * @uses $this->needModules
-     * @throws \Bitrix\Main\LoaderException
-     */
-    public function includeModules()
-    {
-        if (empty($this->needModules))
-        {
-            return false;
-        }
-
-        foreach ($this->needModules as $module)
-        {
-            if (!Main\Loader::includeModule($module))
-            {
-                throw new Main\LoaderException('Failed include module "'.$module.'"');
-            }
-        }
-    }
-
-    /**
-     * @throws \Bitrix\Main\ArgumentNullException
-     */
-    private function checkAutomaticParams()
-    {
-        foreach ($this->checkParams as $key => $params)
-        {
-            $exception = false;
-
-            switch ($params['type'])
-            {
-                case 'int':
-
-                    if (!is_numeric($this->arParams[$key]) && $params['error'] !== false)
-                    {
-                        $exception = new Main\ArgumentTypeException($key, 'integer');
-                    }
-                    else
-                    {
-                        $this->arParams[$key] = intval($this->arParams[$key]);
-                    }
-
-                break;
-
-                case 'string':
-
-                    $this->arParams[$key] = htmlspecialchars(trim($this->arParams[$key]));
-
-                    if (strlen($this->arParams[$key]) <= 0 && $params['error'] !== false)
-                    {
-                        $exception = new Main\ArgumentNullException($key);
-                    }
-
-                break;
-
-                case 'array':
-
-                    if (!is_array($this->arParams[$key]))
-                    {
-                        if ($params['error'] === false)
-                        {
-                            $this->arParams[$key] = array($this->arParams[$key]);
-                        }
-                        else
-                        {
-                            $exception = new Main\ArgumentTypeException($key, 'array');
-                        }
-                    }
-
-                break;
-
-                default:
-                    $exception = new Main\NotSupportedException('Not supported type of parameter for automatical checking');
-                break;
-            }
-
-            if ($exception)
-            {
-                if ($this->checkParams[$key]['error'] === '404')
-                {
-                    $this->return404(true, $exception);
-                }
-                else
-                {
-                    throw $exception;
-                }
-            }
-        }
-    }
 
     /**
      * Checking required component params
@@ -312,22 +199,9 @@ trait Common
      *
      * @uses $this->templatePage
      */
-    public function returnDatas()
+    public function render()
     {
         $this->includeComponentTemplate($this->templatePage);
-    }
-
-    private function executeFinal()
-    {
-        if ($this->exceptionNotifier)
-        {
-            $logFile = Application::getDocumentRoot().$this->__path.'/'.$this->exceptionLog;
-
-            if (is_file($logFile))
-            {
-                unlink($logFile);
-            }
-        }
     }
 
     /**
@@ -340,7 +214,7 @@ trait Common
     public function return404($notifier = false, \Exception $exception = null)
     {
         @define('ERROR_404', 'Y');
-        \CHTTP::SetStatus('404 Not Found');
+        \CHTTP::SetStatus('404 Not Found'); // todo Replace on D7
 
         if ($exception !== false)
         {
@@ -358,98 +232,6 @@ trait Common
                 throw new \Exception('Page not found');
             }
         }
-    }
-
-    /**
-     * Called when an error occurs
-     *
-     * Resets the cache, show error message (two mode: for users and for admins),
-     * sending notification to admin email
-     *
-     * @param \Exception $exception
-     * @param bool $notifier Sent notify to admin email. Default — value of property $this->exceptionNotifier
-     * @uses exceptionNotifier
-     */
-    protected function catchException(\Exception $exception, $notifier = null)
-    {
-        global $USER;
-
-        $this->abortCache();
-
-        if ($USER->IsAdmin())
-        {
-            $this->showExceptionAdmin($exception);
-        }
-        else
-        {
-            $this->showExceptionUser($exception);
-        }
-
-        if (($notifier === true) || ($this->exceptionNotifier && $notifier !== false) && BX_EXC_NOTIFY !== false)
-        {
-            $this->sendNotifyException($exception);
-        }
-    }
-
-    /**
-     * Send error message to the admin email
-     *
-     * @param \Exception $exception
-     */
-    protected function sendNotifyException($exception)
-    {
-        $adminEmail = Main\Config\Option::get('main', 'email_from');
-        $logFile = Application::getDocumentRoot().$this->__path.'/'.$this->exceptionLog;
-
-        if (!is_file($logFile) && $adminEmail)
-        {
-            $date = date('Y-m-d H:m:s');
-
-            bxmail(
-                $adminEmail,
-                Loc::getMessage(
-                    'BBC_COMPONENT_EXCEPTION_EMAIL_SUBJECT', array('#SITE_URL#' => SITE_SERVER_NAME)
-                ),
-                Loc::getMessage(
-                    'BBC_COMPONENT_EXCEPTION_EMAIL_TEXT',
-                    array(
-                        '#URL#' => 'http://'.SITE_SERVER_NAME.Main\Context::getCurrent()->getRequest()->getRequestedPage(),
-                        '#DATE#' => $date,
-                        '#EXCEPTION_MESSAGE#' => $exception->getMessage(),
-                        '#EXCEPTION#' => $exception
-                    )
-                ),
-                'Content-Type: text/html; charset=utf-8'
-            );
-
-            $log = fopen($logFile, 'w');
-            fwrite($log, '['.$date.'] Catch exception: '.PHP_EOL.$exception);
-            fclose($log);
-        }
-    }
-
-    /**
-     * Display of the error for user
-     *
-     * @param \Exception $exception
-     */
-    protected function showExceptionUser(\Exception $exception)
-    {
-        // todo set HTTP status and constant
-
-        ShowError(Loc::getMessage('BBC_COMPONENT_CATCH_EXCEPTION'));
-    }
-
-    /**
-     * Display of the error for admin
-     *
-     * @param \Exception $exception
-     */
-    protected function showExceptionAdmin(\Exception $exception)
-    {
-        ShowError($exception->getMessage());
-
-        echo nl2br($exception);
     }
 
     /**
