@@ -9,9 +9,6 @@
     'Bex\Bbc\Basis' => 'lib/basis.php',
     'Bex\Bbc\BasisRouter' => 'lib/basisrouter.php',
 
-    'Bex\Bbc\Plugin\Plugin' => 'lib/plugin/plugin.php',
-    'Bex\Bbc\Plugin\PluginTrait' => 'lib/plugin/plugintrait.php',
-
     'Bex\Bbc\Traits\Common' => 'lib/traits/common.php',
     'Bex\Bbc\Traits\Elements' => 'lib/traits/elements.php',
 
@@ -20,7 +17,14 @@
 
 
 
+
+
+    'Bex\AdvancedComponent\Plugin' => 'lib/Plugin.php',
+    'Bex\AdvancedComponent\PluginManager' => 'lib/PluginManager.php',
+    'Bex\AdvancedComponent\AdvancedComponentTrait' => 'lib/AdvancedComponentTrait.php',
+
     'Bex\Plugins\ErrorNotifierPlugin' => 'lib/plugins/errornotifier.php',
+    'Bex\Plugins\CheckerPlugin' => 'lib/plugins/checker.php',
 
     'Bex\Plugins\Elements\ParamsPlugin' => 'lib/plugins/elements/params.php',
     'Bex\Plugins\Elements\SeoPlugin' => 'lib/plugins/elements/seo.php',

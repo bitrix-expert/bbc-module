@@ -99,14 +99,6 @@ trait Common
     }
 
     /**
-     * Execute before getting results. Not cached
-     */
-    protected function executeProlog()
-    {
-
-    }
-
-    /**
      * Cache init
      *
      * @return bool
@@ -156,15 +148,6 @@ trait Common
         $this->abortResultCache();
     }
 
-    /**
-     * A method for extending the results of the child classes.
-     * The result this method will be cached
-     */
-    protected function executeMain()
-    {
-
-    }
-
     protected function executeMainCommon()
     {
         if (strlen($this->arParams['AJAX_PARAM_NAME']) > 0 && strlen($this->arParams['AJAX_COMPONENT_ID']) > 0)
@@ -173,14 +156,6 @@ trait Common
 
             $this->setResultCacheKeys(array('AJAX_REQUEST_PARAMS'));
         }
-    }
-
-    /**
-     * Execute after getting results. Not cached
-     */
-    protected function executeEpilog()
-    {
-
     }
 
     /**

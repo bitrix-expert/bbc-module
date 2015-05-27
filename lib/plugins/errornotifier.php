@@ -7,11 +7,11 @@
 
 namespace Bex\Plugins;
 
+use Bex\AdvancedComponent\Plugin;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Application;
 use Bitrix\Main\Context;
 use Bitrix\Main\Config\Option;
-use Bex\Bbc\Plugin\Plugin;
 
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>

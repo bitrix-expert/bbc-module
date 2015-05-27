@@ -7,9 +7,9 @@
 
 namespace Bex\Plugins\Elements;
 
+use Bex\AdvancedComponent\Plugin;
 use Bitrix\Iblock\InheritedProperty;
 use Bitrix\Main\Page\Asset;
-use Bex\Bbc\Plugin\Plugin;
 
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>
@@ -18,7 +18,7 @@ use Bex\Bbc\Plugin\Plugin;
  */
 class SeoPlugin extends Plugin
 {
-    protected function executeProlog()
+    public function executeProlog()
     {
         if ($this->component->arParams['OG_TAGS_IMAGE'])
         {
@@ -26,7 +26,7 @@ class SeoPlugin extends Plugin
         }
     }
 
-    protected function executeMain()
+    public function executeMain()
     {
         if ($this->component->arParams['SECTION_CODE'] && !$this->component->arParams['SECTION_ID'])
         {
@@ -377,7 +377,7 @@ class SeoPlugin extends Plugin
         }
     }
 
-    protected function executeEpilog()
+    public function executeEpilog()
     {
         $this->setSeoTags();
         $this->setOgTags();

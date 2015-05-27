@@ -1,6 +1,6 @@
 <?php
 
-namespace Bex\Bbc\Plugin;
+namespace Bex\AdvancedComponent;
 
 use Bitrix\Main\ArgumentTypeException;
 
@@ -9,7 +9,7 @@ abstract class Plugin
     /**
      * @var static
      */
-    protected static $instance = null;
+    protected static $instance = [];
 
     /**
      * @var \CBitrixComponent
@@ -28,7 +28,7 @@ abstract class Plugin
      */
     public static function getInstance()
     {
-        if (!isset(static::$instance))
+        if (!isset(static::$instance[get_called_class()]))
         {
             $component = func_get_arg(0);
 
@@ -37,10 +37,10 @@ abstract class Plugin
                 throw new ArgumentTypeException('$component', '\CBitrixComponent');
             }
 
-            static::$instance = new static($component);
+            static::$instance[get_called_class()] = new static($component);
         }
 
-        return static::$instance;
+        return static::$instance[get_called_class()];
     }
 
     public static function getClass()

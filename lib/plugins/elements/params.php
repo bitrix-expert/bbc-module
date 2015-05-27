@@ -7,7 +7,7 @@
 
 namespace Bex\Plugins\Elements;
 
-use Bex\Bbc\Plugin\Plugin;
+use Bex\AdvancedComponent\Plugin;
 
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>

@@ -7,7 +7,8 @@
 
 namespace Bex\Bbc;
 
-use Bex\Bbc\Plugin\PluginTrait;
+use Bex\AdvancedComponent\PluginManager;
+use Bex\AdvancedComponent\AdvancedComponentTrait;
 use Bex\Plugins\CheckerPlugin;
 use Bex\Plugins\ErrorNotifierPlugin;
 
@@ -18,7 +19,7 @@ use Bex\Plugins\ErrorNotifierPlugin;
  */
 abstract class Basis extends \CBitrixComponent
 {
-    use Traits\Common, PluginTrait;
+    use Traits\Common, AdvancedComponentTrait;
 
     /**
      * @var bool Auto executing methods of prolog / epilog in the traits
@@ -104,8 +105,12 @@ abstract class Basis extends \CBitrixComponent
         ];
     }
 
-    final protected function executeBasis()
+    final protected function executeAdvancedComponent()
     {
+        $this->pluginManager = new PluginManager($this, $this->plugins());
+
+        $this->pluginManager->trigger('executeInit');
+
         $checker = CheckerPlugin::getInstance();
 
         $this->readUsedTraits();
@@ -116,14 +121,14 @@ abstract class Basis extends \CBitrixComponent
         $this->startAjax();
 
         $this->executeTraits('prolog');
-        $this->executePluginsProlog();
+        $this->pluginManager->trigger('executeProlog');
         $this->executeProlog();
 
         if ($this->startCache())
         {
             $this->executeMain();
             $this->executeTraits('main');
-            $this->executePluginsMain();
+            $this->pluginManager->trigger('executeMain');
 
             if ($this->cacheTemplate)
             {
@@ -139,17 +144,16 @@ abstract class Basis extends \CBitrixComponent
         }
 
         $this->executeTraits('epilog');
-        $this->executePluginsEpilog();
+        $this->pluginManager->trigger('executeMain');
         $this->executeEpilog();
-        $this->executePluginsFinal();
 
-        $this->stopAjax();
+        $this->pluginManager->trigger('executeFinal');
     }
 
     public function executeComponent()
     {
         try {
-            $this->executeBasis();
+            $this->executeAdvancedComponent();
         } catch (\Exception $e)
         {
             ErrorNotifierPlugin::getInstance()->catchException($e);

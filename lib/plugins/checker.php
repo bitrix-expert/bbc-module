@@ -7,7 +7,7 @@
 
 namespace Bex\Plugins;
 
-use Bex\Bbc\Plugin\Plugin;
+use Bex\AdvancedComponent\Plugin;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\ArgumentTypeException;
