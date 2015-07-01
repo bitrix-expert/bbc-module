@@ -16,8 +16,15 @@ class PluginManager
 {
     private $usedPlugins = [];
 
-    public function __construct($component, $plugins)
+    /**
+     * @param \CBitrixComponent|AdvancedComponentTrait $component
+     *
+     * @throws ArgumentTypeException
+     */
+    public function __construct($component)
     {
+        $plugins = $component->plugins();
+
         if (!is_array($plugins))
         {
             throw new ArgumentTypeException('plugins', 'array');
@@ -67,5 +74,20 @@ class PluginManager
                 }
             }
         }
+    }
+
+    public function add()
+    {
+
+    }
+
+    public function remove()
+    {
+
+    }
+
+    public function getList()
+    {
+        return $this->usedPlugins;
     }
 }

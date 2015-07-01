@@ -105,30 +105,46 @@ abstract class Basis extends \CBitrixComponent
         ];
     }
 
+    /*public function configurate()
+    {
+        $this->addPlugin([
+            ErrorNotifierPlugin::getClass(),
+            [
+                'class' => CheckerPlugin::getClass(),
+                'prop1' => '8'
+            ],
+        ]);
+
+        $this->pluginManager->add();
+
+        CheckerPlugin::getInstance()->setCheckParams([
+            'IBLOCK_ID' => ['type' => 'string']
+        ]);
+
+        $this->removePlugin(ErrorNotifierPlugin::getClass());
+
+        echo $this->getPluginsList();
+    }*/
+
     final protected function executeAdvancedComponent()
     {
-        $this->pluginManager = new PluginManager($this, $this->plugins());
+        $pm = new PluginManager($this);
 
-        $this->pluginManager->trigger('executeInit');
-
-        $checker = CheckerPlugin::getInstance();
+        $pm->trigger('executeInit');
 
         $this->readUsedTraits();
-
-        $checker->includeModules();
-        $checker->checkParams();
 
         $this->startAjax();
 
         $this->executeTraits('prolog');
-        $this->pluginManager->trigger('executeProlog');
+        $pm->trigger('executeProlog');
         $this->executeProlog();
 
         if ($this->startCache())
         {
             $this->executeMain();
             $this->executeTraits('main');
-            $this->pluginManager->trigger('executeMain');
+            $pm->trigger('executeMain');
 
             if ($this->cacheTemplate)
             {
@@ -144,18 +160,17 @@ abstract class Basis extends \CBitrixComponent
         }
 
         $this->executeTraits('epilog');
-        $this->pluginManager->trigger('executeMain');
+        $pm->trigger('executeMain');
         $this->executeEpilog();
 
-        $this->pluginManager->trigger('executeFinal');
+        $pm->trigger('executeFinal');
     }
 
     public function executeComponent()
     {
         try {
             $this->executeAdvancedComponent();
-        } catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             ErrorNotifierPlugin::getInstance()->catchException($e);
         }
     }

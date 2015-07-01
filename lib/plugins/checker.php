@@ -29,6 +29,12 @@ class CheckerPlugin extends Plugin
      */
     protected $checkParams = [];
 
+    public function executeInit()
+    {
+        $this->includeModules();
+        $this->checkParams();
+    }
+
     /**
      * Include modules
      *

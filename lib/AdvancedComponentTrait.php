@@ -40,7 +40,7 @@ trait AdvancedComponentTrait
      */
     protected function executeAdvancedComponent()
     {
-        $this->pluginManager = new PluginManager($this, $this->plugins());
+        $this->pluginManager = new PluginManager($this);
 
         $this->pluginManager->trigger('executeInit');
 
