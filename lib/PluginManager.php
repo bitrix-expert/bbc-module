@@ -7,6 +7,7 @@
 
 namespace Bex\AdvancedComponent;
 
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ArgumentTypeException;
 
 /**
@@ -14,7 +15,11 @@ use Bitrix\Main\ArgumentTypeException;
  */
 class PluginManager
 {
-    private $usedPlugins = [];
+    /**
+     * @var Plugin
+     */
+    private $pluginsInstance;
+    protected $component;
 
     /**
      * @param \CBitrixComponent|AdvancedComponentTrait $component
@@ -23,71 +28,58 @@ class PluginManager
      */
     public function __construct($component)
     {
-        $plugins = $component->plugins();
-
-        if (!is_array($plugins))
-        {
-            throw new ArgumentTypeException('plugins', 'array');
-        }
-        elseif (!empty($plugins))
-        {
-            foreach ($plugins as $plugin)
-            {
-                if (is_array($plugin) && isset($plugin['class']))
-                {
-                    $class = $plugin['class'];
-                }
-                elseif (is_string($plugin) && strlen($plugin) > 0)
-                {
-                    $class = $plugin;
-                }
-                else
-                {
-                    continue;
-                }
-
-                $pluginInstance = call_user_func_array([$class, 'getInstance'], [$component]);
-
-                if ($pluginInstance instanceof Plugin)
-                {
-                    $this->usedPlugins[] = $pluginInstance;
-                }
-                else
-                {
-                    /**
-                     * @todo Return notice
-                     */
-                }
-            }
-        }
+        $this->component = $component;
+        $component->configurate();
     }
 
     public function trigger($action)
     {
-        if ($action && !empty($this->usedPlugins))
+        if (!empty($this->pluginsInstance))
         {
-            foreach ($this->usedPlugins as $plugin)
+            foreach ($this->pluginsInstance as $instance)
             {
-                if (method_exists($plugin, $action))
+                if (method_exists($instance, $action))
                 {
-                    call_user_func($plugin->$action());
+                    call_user_func($instance->$action());
                 }
             }
         }
     }
 
-    public function add()
+    public function add($plugin)
     {
+        if (is_array($plugin) && isset($plugin['class']))
+        {
+            $class = $plugin['class'];
+        }
+        elseif (is_string($plugin) && strlen($plugin) > 0)
+        {
+            $class = $plugin;
+        }
+        else
+        {
+            throw new ArgumentException('invalid plugin', $plugin);
+        }
 
+        $pluginInstance = call_user_func_array([$class, 'getInstance'], [$this->component]);
+
+        if ($pluginInstance instanceof Plugin)
+        {
+            $this->pluginsInstance[$class] = $pluginInstance;
+        }
+        else
+        {
+            throw new \InvalidArgumentException('Plugin not instanceof Plugin');
+        }
     }
 
-    public function remove()
+    public function remove($class)
     {
-
+        unset($this->pluginsInstance[$class]);
     }
 
-    public function getList()
+    public function get($class)
     {
-        return $this->usedPlugins;
+        return $this->pluginsInstance[$class];
     }
 }

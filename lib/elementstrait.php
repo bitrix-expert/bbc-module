@@ -5,14 +5,12 @@
  * @license MIT
  */
 
-namespace Bex\Bbc\Traits;
+namespace Bex\Bbc;
 
 /**
- * Class Elements
- *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-trait Elements
+trait ElementsTrait
 {
     /**
      * Generate navigation string

@@ -17,9 +17,8 @@ trait AdvancedComponentTrait
      */
     public $pluginManager;
 
-    public function plugins()
+    public function configurate()
     {
-        return [];
     }
 
     /**
@@ -29,8 +28,7 @@ trait AdvancedComponentTrait
     {
         try {
             $this->executeAdvancedComponent();
-        } catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             ShowError($e->getMessage());
         }
     }

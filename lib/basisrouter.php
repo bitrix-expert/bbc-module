@@ -16,7 +16,7 @@ use Bitrix\Main;
  */
 abstract class BasisRouter extends \CBitrixComponent
 {
-    use Traits\Common;
+    use CommonTrait;
 
     /**
      * @var array Paths of templates default

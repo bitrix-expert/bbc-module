@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-namespace Bex\Bbc\Traits;
+namespace Bex\Bbc;
 
 use Bitrix\Main;
 use Bitrix\Main\Application;
@@ -18,28 +18,24 @@ Loc::loadMessages(__FILE__);
  *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-trait Common
+trait CommonTrait
 {
     /**
      * @var array Additional cache ID
      */
     private $cacheAdditionalId;
-
     /**
      * @var string Cache dir
      */
     protected $cacheDir = false;
-
     /**
      * @var bool Caching template of the component (default not cache)
      */
     protected $cacheTemplate = true;
-
     /**
      * @var string Salt for component ID for AJAX request
      */
     protected $ajaxComponentIdSalt;
-
     /**
      * @var string Template page name
      */
@@ -152,9 +148,9 @@ trait Common
     {
         if (strlen($this->arParams['AJAX_PARAM_NAME']) > 0 && strlen($this->arParams['AJAX_COMPONENT_ID']) > 0)
         {
-            $this->arResult['AJAX_REQUEST_PARAMS'] = $this->arParams['AJAX_PARAM_NAME'].'='.$this->arParams['AJAX_COMPONENT_ID'];
+            $this->arResult['AJAX_REQUEST_PARAMS'] = $this->arParams['AJAX_PARAM_NAME'] . '=' . $this->arParams['AJAX_COMPONENT_ID'];
 
-            $this->setResultCacheKeys(array('AJAX_REQUEST_PARAMS'));
+            $this->setResultCacheKeys(['AJAX_REQUEST_PARAMS']);
         }
     }
 

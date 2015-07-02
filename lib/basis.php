@@ -19,7 +19,7 @@ use Bex\Plugins\ErrorNotifierPlugin;
  */
 abstract class Basis extends \CBitrixComponent
 {
-    use Traits\Common, AdvancedComponentTrait;
+    use CommonTrait, AdvancedComponentTrait;
 
     /**
      * @var bool Auto executing methods of prolog / epilog in the traits
@@ -97,17 +97,9 @@ abstract class Basis extends \CBitrixComponent
         }
     }
 
-    public function plugins()
+    public function configurate()
     {
-        return [
-            'errorNotifier' => ErrorNotifierPlugin::getClass(),
-            'checker' => CheckerPlugin::getClass(),
-        ];
-    }
-
-    /*public function configurate()
-    {
-        $this->addPlugin([
+        $this->pluginManager->add([
             ErrorNotifierPlugin::getClass(),
             [
                 'class' => CheckerPlugin::getClass(),
@@ -115,36 +107,34 @@ abstract class Basis extends \CBitrixComponent
             ],
         ]);
 
-        $this->pluginManager->add();
-
         CheckerPlugin::getInstance()->setCheckParams([
             'IBLOCK_ID' => ['type' => 'string']
         ]);
 
-        $this->removePlugin(ErrorNotifierPlugin::getClass());
+        $this->pluginManager->remove(ErrorNotifierPlugin::getClass());
 
-        echo $this->getPluginsList();
-    }*/
+        echo $this->pluginManager->getList();
+    }
 
     final protected function executeAdvancedComponent()
     {
-        $pm = new PluginManager($this);
+        $this->pluginManager = new PluginManager($this);
 
-        $pm->trigger('executeInit');
+        $this->pluginManager->trigger('executeInit');
 
         $this->readUsedTraits();
 
         $this->startAjax();
 
         $this->executeTraits('prolog');
-        $pm->trigger('executeProlog');
+        $this->pluginManager->trigger('executeProlog');
         $this->executeProlog();
 
         if ($this->startCache())
         {
             $this->executeMain();
             $this->executeTraits('main');
-            $pm->trigger('executeMain');
+            $this->pluginManager->trigger('executeMain');
 
             if ($this->cacheTemplate)
             {
@@ -160,10 +150,10 @@ abstract class Basis extends \CBitrixComponent
         }
 
         $this->executeTraits('epilog');
-        $pm->trigger('executeMain');
+        $this->pluginManager->trigger('executeMain');
         $this->executeEpilog();
 
-        $pm->trigger('executeFinal');
+        $this->pluginManager->trigger('executeFinal');
     }
 
     public function executeComponent()
