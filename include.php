@@ -18,11 +18,6 @@
 
 
 
-
-    'Bex\AdvancedComponent\Plugin' => 'lib/Plugin.php',
-    'Bex\AdvancedComponent\PluginManager' => 'lib/PluginManager.php',
-    'Bex\AdvancedComponent\AdvancedComponentTrait' => 'lib/AdvancedComponentTrait.php',
-
     'Bex\Plugins\ErrorNotifierPlugin' => 'lib/plugins/errornotifier.php',
     'Bex\Plugins\CheckerPlugin' => 'lib/plugins/checker.php',
 
