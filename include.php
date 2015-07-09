@@ -19,7 +19,8 @@
 
 
     'Bex\Plugins\ErrorNotifierPlugin' => 'lib/plugins/errornotifier.php',
-    'Bex\Plugins\CheckerPlugin' => 'lib/plugins/checker.php',
+    'Bex\Plugins\IncluderPlugin' => 'lib/plugins/includer.php',
+    'Bex\Plugins\ParamsValidatorPlugin' => 'lib/plugins/paramsvalidator.php',
 
     'Bex\Plugins\Elements\ParamsPlugin' => 'lib/plugins/elements/params.php',
     'Bex\Plugins\Elements\SeoPlugin' => 'lib/plugins/elements/seo.php',

@@ -9,7 +9,7 @@ namespace Bex\Bbc;
 
 use Bex\AdvancedComponent\PluginManager;
 use Bex\AdvancedComponent\AdvancedComponentTrait;
-use Bex\Plugins\CheckerPlugin;
+use Bex\Plugins\IncluderPlugin;
 use Bex\Plugins\ErrorNotifierPlugin;
 
 /**
@@ -102,12 +102,12 @@ abstract class Basis extends \CBitrixComponent
         $this->pluginManager->add([
             ErrorNotifierPlugin::getClass(),
             [
-                'class' => CheckerPlugin::getClass(),
+                'class' => IncluderPlugin::getClass(),
                 'prop1' => '8'
             ],
         ]);
 
-        CheckerPlugin::getInstance()->setCheckParams([
+        IncluderPlugin::getInstance()->setCheckParams([
             'IBLOCK_ID' => ['type' => 'string']
         ]);
 

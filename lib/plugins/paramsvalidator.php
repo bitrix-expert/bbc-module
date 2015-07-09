@@ -8,21 +8,14 @@
 namespace Bex\Plugins;
 
 use Bex\AdvancedComponent\Plugin;
-use Bitrix\Main\Loader;
-use Bitrix\Main\LoaderException;
 use Bitrix\Main\ArgumentTypeException;
 use Bitrix\Main\NotSupportedException;
 
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-class CheckerPlugin extends Plugin
+class ParamsValidatorPlugin extends Plugin
 {
-    /**
-     * @var array The codes of modules that will be connected when performing component
-     */
-    protected $needModules = [];
-
     /**
      * @var array List keys from $this->arParams for checking
      * @example $checkParams = ['IBLOCK_TYPE' => ['type' => 'string'], 'ELEMENT_ID' => ['type' => 'int', 'error' => '404']];
@@ -31,30 +24,7 @@ class CheckerPlugin extends Plugin
 
     public function executeInit()
     {
-        $this->includeModules();
         $this->checkParams();
-    }
-
-    /**
-     * Include modules
-     *
-     * @uses $this->needModules
-     * @throws \Bitrix\Main\LoaderException
-     */
-    public function includeModules()
-    {
-        if (empty($this->needModules))
-        {
-            return false;
-        }
-
-        foreach ($this->needModules as $module)
-        {
-            if (!Loader::includeModule($module))
-            {
-                throw new LoaderException('Failed include module "' . $module . '"');
-            }
-        }
     }
 
     /**
