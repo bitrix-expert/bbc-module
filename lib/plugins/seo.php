@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-namespace Bex\Plugins\Elements;
+namespace Bex\Plugins;
 
 use Bex\AdvancedComponent\Plugin;
 use Bitrix\Iblock\InheritedProperty;
@@ -15,6 +15,7 @@ use Bitrix\Main\Page\Asset;
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  *
  * @todo Add .parameters.php
+ * @todo Must be is the Factory or renamed to ElementsSeoPlugin
  */
 class SeoPlugin extends Plugin
 {

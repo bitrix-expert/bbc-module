@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-namespace Bex\Plugins\Elements;
+namespace Bex\Plugins;
 
 use Bex\AdvancedComponent\Plugin;
 

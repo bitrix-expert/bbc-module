@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-namespace Bex\Plugins\Elements;
+namespace Bex\Plugins;
 
 use Bex\AdvancedComponent\Plugin;
 
@@ -14,7 +14,7 @@ use Bex\AdvancedComponent\Plugin;
  *
  * @todo Add .parameters.php
  */
-class ParamsPlugin extends Plugin
+class ElementsParamsPlugin extends Plugin
 {
     /**
      * @var array|bool Group parameters for \CIBlockElement::GetList()

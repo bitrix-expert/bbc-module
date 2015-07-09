@@ -22,7 +22,7 @@
     'Bex\Plugins\IncluderPlugin' => 'lib/plugins/includer.php',
     'Bex\Plugins\ParamsValidatorPlugin' => 'lib/plugins/paramsvalidator.php',
 
-    'Bex\Plugins\Elements\ParamsPlugin' => 'lib/plugins/elements/params.php',
-    'Bex\Plugins\Elements\SeoPlugin' => 'lib/plugins/elements/seo.php',
-    'Bex\Plugins\Elements\HermitagePlugin' => 'lib/plugins/elements/hermitage.php',
+    'Bex\Plugins\ElementsParamsPlugin' => 'lib/plugins/elementsparams.php',
+    'Bex\Plugins\SeoPlugin' => 'lib/plugins/seo.php',
+    'Bex\Plugins\HermitagePlugin' => 'lib/plugins/hermitage.php',
 ]);
