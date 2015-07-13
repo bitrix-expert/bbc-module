@@ -101,24 +101,10 @@ abstract class BasisComponent extends \CBitrixComponent
 
     public function configurate()
     {
-        $this->pluginManager->add([
-            ErrorNotifierPlugin::getClass(),
-            [
-                'class' => IncluderPlugin::getClass(),
-                'prop1' => '8'
-            ],
-        ]);
 
-        IncluderPlugin::getInstance()->setCheckParams([
-            'IBLOCK_ID' => ['type' => 'string']
-        ]);
-
-        $this->pluginManager->remove(ErrorNotifierPlugin::getClass());
-
-        echo $this->pluginManager->getList();
     }
 
-    final protected function executeAdvancedComponent()
+    final protected function executeBasis()
     {
         $this->pluginManager = new PluginManager($this);
 
@@ -158,10 +144,18 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->pluginManager->trigger('executeFinal');
     }
 
+    public function executeProlog()
+    {
+    }
+
+    public function executeEpilog()
+    {
+    }
+
     public function executeComponent()
     {
         try {
-            $this->executeAdvancedComponent();
+            $this->executeBasis();
         } catch (\Exception $e) {
             ErrorNotifierPlugin::getInstance()->catchException($e);
         }

@@ -7,10 +7,11 @@
 
 namespace Bex\Bbc\Plugins;
 
-use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ArgumentTypeException;
 
 /**
+ * Plugin Manager
+ *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 class PluginManager
@@ -19,6 +20,7 @@ class PluginManager
      * @var Plugin
      */
     private $pluginsInstance;
+
     protected $component;
 
     /**
@@ -29,9 +31,16 @@ class PluginManager
     public function __construct($component)
     {
         $this->component = $component;
+
+        $component->pluginManager = $this;
         $component->configurate();
     }
 
+    /**
+     * Called to notify the plugin about the happened event
+     *
+     * @param string $action Action name
+     */
     public function trigger($action)
     {
         if (!empty($this->pluginsInstance))
@@ -46,36 +55,39 @@ class PluginManager
         }
     }
 
+    /**
+     * @param Plugin $plugin Object of plugin
+     *
+     * @return $this
+     */
     public function add($plugin)
     {
-        if (is_array($plugin) && isset($plugin['class']))
-        {
-            $class = $plugin['class'];
-        }
-        elseif (is_string($plugin) && strlen($plugin) > 0)
-        {
-            $class = $plugin;
-        }
-        else
-        {
-            throw new ArgumentException('invalid plugin', $plugin);
-        }
-
-        $pluginInstance = call_user_func_array([$class, 'getInstance'], [$this->component]);
+        $pluginInstance = call_user_func_array([$plugin, 'getInstance'], [$this->component]);
 
         if ($pluginInstance instanceof Plugin)
         {
-            $this->pluginsInstance[$class] = $pluginInstance;
+            $this->pluginsInstance[$plugin] = $pluginInstance;
         }
         else
         {
             throw new \InvalidArgumentException('Plugin not instanceof Plugin');
         }
+
+        return $this;
     }
 
+    /**
+     * Delete plugin from component
+     *
+     * @param string $class Name of class for delete plugin. Can be used method getClass: PluginClass::getClass()
+     *
+     * @return $this
+     */
     public function remove($class)
     {
         unset($this->pluginsInstance[$class]);
+
+        return $this;
     }
 
     public function get($class)

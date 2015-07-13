@@ -16,8 +16,15 @@ abstract class Plugin
      */
     protected $component;
 
-    protected function __construct($component)
+    public function __construct()
     {
+        $component = func_get_arg(0);
+
+        if (!$component instanceof \CBitrixComponent)
+        {
+            throw new ArgumentTypeException('$component', '\CBitrixComponent');
+        }
+
         $this->component = $component;
     }
 
