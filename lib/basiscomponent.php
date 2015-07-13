@@ -7,29 +7,31 @@
 
 namespace Bex\Bbc;
 
-use Bex\AdvancedComponent\PluginManager;
-use Bex\AdvancedComponent\AdvancedComponentTrait;
-use Bex\Plugins\IncluderPlugin;
-use Bex\Plugins\ErrorNotifierPlugin;
+use Bex\Bbc\Plugins\PluginManager;
+use Bex\Bbc\Plugins\IncluderPlugin;
+use Bex\Bbc\Plugins\ErrorNotifierPlugin;
 
 /**
  * Abstraction basis component
  *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-abstract class Basis extends \CBitrixComponent
+abstract class BasisComponent extends \CBitrixComponent
 {
-    use CommonTrait, AdvancedComponentTrait;
+    use CommonTrait;
 
     /**
      * @var bool Auto executing methods of prolog / epilog in the traits
      */
     public $traitsAutoExecute = true;
-
     /**
      * @var array Used traits
      */
     private $usedTraits;
+    /**
+     * @var PluginManager
+     */
+    public $pluginManager;
 
     /**
      * Executing methods prolog, getResult and epilog included traits

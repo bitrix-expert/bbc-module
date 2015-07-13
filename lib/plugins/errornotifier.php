@@ -5,9 +5,9 @@
  * @license MIT
  */
 
-namespace Bex\Plugins;
+namespace Bex\Bbc\Plugins;
 
-use Bex\AdvancedComponent\Plugin;
+use Bex\Bbc\Plugins\Plugin;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Application;
 use Bitrix\Main\Context;

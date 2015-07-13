@@ -6,7 +6,7 @@
  */
 
 \Bitrix\Main\Loader::registerAutoLoadClasses('bex.bbc', [
-    'Bex\Bbc\Basis' => 'lib/basis.php',
+    'Bex\Bbc\Basis' => 'lib/basiscomponent.php',
     'Bex\Bbc\BasisRouter' => 'lib/basisrouter.php',
 
     'Bex\Bbc\CommonTrait' => 'lib/commontrait.php',
@@ -14,15 +14,16 @@
 
     'Bex\Bbc\Helpers\ComponentParameters' => 'lib/helpers/componentparameters.php',
 
+    'Bex\Bbc\Plugins\Plugin' => 'lib/plugins/plugin.php',
+    'Bex\Bbc\Plugins\PluginManager' => 'lib/plugins/pluginmanager.php',
 
 
 
+    'Bex\Bbc\Plugins\ErrorNotifierPlugin' => 'lib/plugins/errornotifier.php',
+    'Bex\Bbc\Plugins\IncluderPlugin' => 'lib/plugins/includer.php',
+    'Bex\Bbc\Plugins\ParamsValidatorPlugin' => 'lib/plugins/paramsvalidator.php',
 
-    'Bex\Plugins\ErrorNotifierPlugin' => 'lib/plugins/errornotifier.php',
-    'Bex\Plugins\IncluderPlugin' => 'lib/plugins/includer.php',
-    'Bex\Plugins\ParamsValidatorPlugin' => 'lib/plugins/paramsvalidator.php',
-
-    'Bex\Plugins\ElementsParamsPlugin' => 'lib/plugins/elementsparams.php',
-    'Bex\Plugins\SeoPlugin' => 'lib/plugins/seo.php',
-    'Bex\Plugins\HermitagePlugin' => 'lib/plugins/hermitage.php',
+    'Bex\Bbc\Plugins\ElementsParamsPlugin' => 'lib/plugins/elementsparams.php',
+    'Bex\Bbc\Plugins\SeoPlugin' => 'lib/plugins/seo.php',
+    'Bex\Bbc\Plugins\HermitagePlugin' => 'lib/plugins/hermitage.php',
 ]);

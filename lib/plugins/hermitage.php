@@ -5,9 +5,9 @@
  * @license MIT
  */
 
-namespace Bex\Plugins;
+namespace Bex\Bbc\Plugins;
 
-use Bex\AdvancedComponent\Plugin;
+use Bex\Bbc\Plugins\Plugin;
 
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>
