@@ -10,13 +10,12 @@ abstract class Plugin
      * @var static
      */
     protected static $instance = [];
-
     /**
      * @var \CBitrixComponent
      */
     protected $component;
 
-    public function __construct()
+    /*public function __construct()
     {
         $component = func_get_arg(0);
 
@@ -26,14 +25,14 @@ abstract class Plugin
         }
 
         $this->component = $component;
-    }
+    }*/
 
     /**
      * @return static
      *
      * @throws ArgumentTypeException
      */
-    public static function getInstance()
+    /*public static function getInstance()
     {
         if (!isset(static::$instance[get_called_class()]))
         {
@@ -48,11 +47,16 @@ abstract class Plugin
         }
 
         return static::$instance[get_called_class()];
-    }
+    }*/
 
-    public static function getClass()
+    public static function getName()
     {
         return get_called_class();
+    }
+
+    public function init(\CBitrixComponent $component)
+    {
+        $this->component = $component;
     }
 
     public function dependencies()

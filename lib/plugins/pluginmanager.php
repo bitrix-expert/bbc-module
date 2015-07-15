@@ -17,14 +17,14 @@ use Bitrix\Main\ArgumentTypeException;
 class PluginManager
 {
     /**
-     * @var Plugin
+     * @var array
      */
-    private $pluginsInstance;
+    private $plugins;
 
     protected $component;
 
     /**
-     * @param \CBitrixComponent|AdvancedComponentTrait $component
+     * @param \Bex\Bbc\BasisComponent $component
      *
      * @throws ArgumentTypeException
      */
@@ -43,9 +43,9 @@ class PluginManager
      */
     public function trigger($action)
     {
-        if (!empty($this->pluginsInstance))
+        if (!empty($this->plugins))
         {
-            foreach ($this->pluginsInstance as $instance)
+            foreach ($this->plugins as $instance)
             {
                 if (method_exists($instance, $action))
                 {
@@ -62,15 +62,15 @@ class PluginManager
      */
     public function add($plugin)
     {
-        $pluginInstance = call_user_func_array([$plugin, 'getInstance'], [$this->component]);
-
-        if ($pluginInstance instanceof Plugin)
+        if ($plugin instanceof Plugin)
         {
-            $this->pluginsInstance[$plugin] = $pluginInstance;
+            $this->plugins[$plugin->getName()] = $plugin;
+
+            $plugin->init($this->component);
         }
         else
         {
-            throw new \InvalidArgumentException('Plugin not instanceof Plugin');
+            throw new \InvalidArgumentException('Plugin not instanceof \Bex\Bbc\Plugins\Plugin');
         }
 
         return $this;
@@ -79,19 +79,19 @@ class PluginManager
     /**
      * Delete plugin from component
      *
-     * @param string $class Name of class for delete plugin. Can be used method getClass: PluginClass::getClass()
+     * @param string $pluginName Name of class for delete plugin. Can be used method getClass: PluginClass::getClass()
      *
      * @return $this
      */
-    public function remove($class)
+    public function remove($pluginName)
     {
-        unset($this->pluginsInstance[$class]);
+        unset($this->plugins[$pluginName]);
 
         return $this;
     }
 
-    public function get($class)
+    public function get($pluginName)
     {
-        return $this->pluginsInstance[$class];
+        return $this->plugins[$pluginName];
     }
 }

@@ -101,7 +101,8 @@ abstract class BasisComponent extends \CBitrixComponent
 
     public function configurate()
     {
-
+        $this->pluginManager
+            ->add(new ErrorNotifierPlugin());
     }
 
     final protected function executeBasis()
