@@ -119,9 +119,9 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->paramsValidator = new ParamsValidatorPlugin();
 
         $this->pluginManager
-            ->add($this->errorNotifier)
-            ->add($this->includer)
-            ->add($this->paramsValidator);
+            ->register($this->errorNotifier)
+            ->register($this->includer)
+            ->register($this->paramsValidator);
     }
 
     final protected function executeBasis()

@@ -60,7 +60,7 @@ class PluginManager
      *
      * @return $this
      */
-    public function add($plugin)
+    public function register($plugin)
     {
         if ($plugin instanceof Plugin)
         {
