@@ -42,7 +42,7 @@ class ErrorNotifierPlugin extends Plugin
     {
         global $USER;
 
-        $this->abortCache(); // todo
+        $this->component->abortCache(); // todo
 
         if ($USER->IsAdmin())
         {

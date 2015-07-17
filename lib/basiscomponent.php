@@ -10,6 +10,7 @@ namespace Bex\Bbc;
 use Bex\Bbc\Plugins\PluginManager;
 use Bex\Bbc\Plugins\IncluderPlugin;
 use Bex\Bbc\Plugins\ErrorNotifierPlugin;
+use Bex\Bbc\Plugins\ParamsValidatorPlugin;
 
 /**
  * Abstraction basis component
@@ -32,6 +33,18 @@ abstract class BasisComponent extends \CBitrixComponent
      * @var PluginManager
      */
     public $pluginManager;
+    /**
+     * @var ErrorNotifierPlugin
+     */
+    public $errorNotifier;
+    /**
+     * @var IncluderPlugin
+     */
+    public $includer;
+    /**
+     * @var ParamsValidatorPlugin
+     */
+    public $paramsValidator;
 
     /**
      * Executing methods prolog, getResult and epilog included traits
@@ -101,8 +114,14 @@ abstract class BasisComponent extends \CBitrixComponent
 
     public function configurate()
     {
+        $this->errorNotifier = new ErrorNotifierPlugin();
+        $this->includer = new IncluderPlugin();
+        $this->paramsValidator = new ParamsValidatorPlugin();
+
         $this->pluginManager
-            ->add(new ErrorNotifierPlugin());
+            ->add($this->errorNotifier)
+            ->add($this->includer)
+            ->add($this->paramsValidator);
     }
 
     final protected function executeBasis()
@@ -158,7 +177,7 @@ abstract class BasisComponent extends \CBitrixComponent
         try {
             $this->executeBasis();
         } catch (\Exception $e) {
-            ErrorNotifierPlugin::getInstance()->catchException($e);
+            $this->errorNotifier->catchException($e);
         }
     }
 }

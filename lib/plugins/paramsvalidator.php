@@ -7,8 +7,8 @@
 
 namespace Bex\Bbc\Plugins;
 
-use Bex\Bbc\Plugins\Plugin;
 use Bitrix\Main\ArgumentTypeException;
+use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\NotSupportedException;
 
 /**
@@ -17,7 +17,7 @@ use Bitrix\Main\NotSupportedException;
 class ParamsValidatorPlugin extends Plugin
 {
     /**
-     * @var array List keys from $this->arParams for checking
+     * @var array List keys from $this->component->arParams for checking
      * @example $checkParams = ['IBLOCK_TYPE' => ['type' => 'string'], 'ELEMENT_ID' => ['type' => 'int', 'error' => '404']];
      */
     protected $checkParams = [];
@@ -28,7 +28,7 @@ class ParamsValidatorPlugin extends Plugin
     }
 
     /**
-     * @throws \Bitrix\Main\ArgumentNullException
+     * @throws ArgumentNullException
      */
     public function checkParams()
     {
@@ -40,22 +40,22 @@ class ParamsValidatorPlugin extends Plugin
             {
                 case 'int':
 
-                    if (!is_numeric($this->arParams[$key]) && $params['error'] !== false)
+                    if (!is_numeric($this->component->arParams[$key]) && $params['error'] !== false)
                     {
                         $exception = new ArgumentTypeException($key, 'integer');
                     }
                     else
                     {
-                        $this->arParams[$key] = intval($this->arParams[$key]);
+                        $this->component->arParams[$key] = intval($this->component->arParams[$key]);
                     }
 
                     break;
 
                 case 'string':
 
-                    $this->arParams[$key] = htmlspecialchars(trim($this->arParams[$key]));
+                    $this->component->arParams[$key] = htmlspecialchars(trim($this->component->arParams[$key]));
 
-                    if (strlen($this->arParams[$key]) <= 0 && $params['error'] !== false)
+                    if (strlen($this->component->arParams[$key]) <= 0 && $params['error'] !== false)
                     {
                         $exception = new ArgumentNullException($key);
                     }
@@ -64,11 +64,11 @@ class ParamsValidatorPlugin extends Plugin
 
                 case 'array':
 
-                    if (!is_array($this->arParams[$key]))
+                    if (!is_array($this->component->arParams[$key]))
                     {
                         if ($params['error'] === false)
                         {
-                            $this->arParams[$key] = [$this->arParams[$key]];
+                            $this->component->arParams[$key] = [$this->component->arParams[$key]];
                         }
                         else
                         {
@@ -96,5 +96,21 @@ class ParamsValidatorPlugin extends Plugin
                 }
             }
         }
+    }
+
+    /**
+     * @todo
+     */
+    public function add(array $parameters)
+    {
+        $this->checkParams += $parameters;
+    }
+
+    /**
+     * @todo
+     */
+    public function remove()
+    {
+
     }
 }
