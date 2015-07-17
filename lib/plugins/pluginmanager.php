@@ -8,6 +8,7 @@
 namespace Bex\Bbc\Plugins;
 
 use Bitrix\Main\ArgumentTypeException;
+use Bex\Bbc\BasisComponent;
 
 /**
  * Plugin Manager
@@ -24,7 +25,7 @@ class PluginManager
     protected $component;
 
     /**
-     * @param \Bex\Bbc\BasisComponent $component
+     * @param BasisComponent $component
      *
      * @throws ArgumentTypeException
      */

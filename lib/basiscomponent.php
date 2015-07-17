@@ -164,11 +164,15 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->pluginManager->trigger('executeFinal');
     }
 
-    public function executeProlog()
+    protected function executeProlog()
     {
     }
 
-    public function executeEpilog()
+    protected function executeMain()
+    {
+    }
+
+    protected function executeEpilog()
     {
     }
 
