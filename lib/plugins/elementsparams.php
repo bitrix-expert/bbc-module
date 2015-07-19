@@ -11,6 +11,7 @@ namespace Bex\Bbc\Plugins;
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  *
  * @todo Add .parameters.php
+ * @todo Rename plugin
  */
 class ElementsParamsPlugin extends Plugin
 {
@@ -18,21 +19,108 @@ class ElementsParamsPlugin extends Plugin
      * @var array|bool Group parameters for \CIBlockElement::GetList()
      */
     private $groupingParams;
-
     /**
      * @var array Values of global filter
      */
     private $filterParams = [];
-
     /**
      * @var array|bool Paginator parameters for \CIBlockElement::GetList()
      */
     private $navStartParams;
+    /**
+     * @var string Method name for prepare result request of the elements
+     */
+    public $processingFetchCallable = 'prepareElementsResult';
 
     public function executeProlog()
     {
         $this->setNavStart();
         $this->setFilters();
+    }
+
+    /**
+     * Generate navigation string
+     *
+     * @param object $result \CIBlockResult
+     */
+    public function generateNav($result)
+    {
+        /**
+         * @global object $navComponentObject
+         */
+
+        if ($this->component->arParams['DISPLAY_BOTTOM_PAGER'] === 'Y'
+            || $this->component->arParams['DISPLAY_TOP_PAGER'] === 'Y')
+        {
+            $this->component->arResult['NAV_STRING'] = $result->GetPageNavStringEx(
+                $navComponentObject,
+                $this->component->arParams['PAGER_TITLE'],
+                $this->component->arParams['PAGER_TEMPLATE'],
+                $this->component->arParams['PAGER_SHOW_ALWAYS']
+            );
+            $this->component->arResult['NAV_CACHED_DATA'] = $navComponentObject->GetTemplateCachedData();
+            $this->component->arResult['NAV_RESULT'] = $result;
+        }
+    }
+
+    /**
+     * Processing request of the elements
+     *
+     * @param \CIBlockResult $element
+     * @return array
+     */
+    public function processingFetch($element)
+    {
+        $elementResult = $element;
+
+        if ($this->component->arParams['RESULT_PROCESSING_MODE'] === 'EXTENDED')
+        {
+            $elementResult = $element->GetFields();
+            $elementResult['PROPS'] = $element->GetProperties();
+        }
+        elseif (!empty($this->component->arParams['SELECT_PROPS']))
+        {
+            foreach ($this->component->arParams['SELECT_PROPS'] as $propCode)
+            {
+                if (trim($propCode))
+                {
+                    $arProp = explode('.', $propCode);
+                    $propCode = array_shift($arProp);
+                    $propValue = $element['PROPERTY_'.$propCode.'_VALUE'];
+                    $propDescr = $element['PROPERTY_'.$propCode.'_DESCRIPTION'];
+
+                    if ($propValue)
+                    {
+                        $elementResult['PROPS'][$propCode]['VALUE'] = $propValue;
+                    }
+
+                    if ($propDescr)
+                    {
+                        $elementResult['PROPS'][$propCode]['DESCRIPTION'] = $propDescr;
+                    }
+
+                    if (!empty($elementResult['PROPS'][$propCode]))
+                    {
+                        foreach ($arProp as $field)
+                        {
+                            $elementResult['PROPS'][$propCode]['LINKED'][$field] = $element['PROPERTY_'.$propCode.'_'.$field];
+                        }
+                    }
+                }
+            }
+        }
+
+        $callable = $this->processingFetchCallable;
+
+        if (method_exists($this->component, $callable))
+        {
+            if ($elementResult = $this->component->$callable($elementResult))
+            {
+                return $elementResult;
+            }
+        }
+
+        return false;
     }
 
     public function setNavStart()
