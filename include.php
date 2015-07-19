@@ -19,6 +19,8 @@
 
 
 
+    'Bex\Bbc\Plugins\CachePlugin' => 'lib/plugins/cache.php',
+    'Bex\Bbc\Plugins\AjaxPlugin' => 'lib/plugins/ajax.php',
     'Bex\Bbc\Plugins\ErrorNotifierPlugin' => 'lib/plugins/errornotifier.php',
     'Bex\Bbc\Plugins\IncluderPlugin' => 'lib/plugins/includer.php',
     'Bex\Bbc\Plugins\ParamsValidatorPlugin' => 'lib/plugins/paramsvalidator.php',

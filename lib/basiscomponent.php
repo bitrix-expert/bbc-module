@@ -19,16 +19,14 @@ use Bex\Bbc\Plugins\ParamsValidatorPlugin;
  */
 abstract class BasisComponent extends \CBitrixComponent
 {
-    use CommonTrait;
-
     /**
-     * @var bool Auto executing methods of prolog / epilog in the traits
+     * @var bool Caching template of the component (default not cache)
      */
-    public $traitsAutoExecute = true;
+    protected $cacheTemplate = true;
     /**
-     * @var array Used traits
+     * @var string Template page name
      */
-    private $usedTraits;
+    protected $templatePage;
     /**
      * @var PluginManager
      */
@@ -46,72 +44,6 @@ abstract class BasisComponent extends \CBitrixComponent
      */
     public $paramsValidator;
 
-    /**
-     * Executing methods prolog, getResult and epilog included traits
-     *
-     * @param string $type prolog, getResult or epilog
-     */
-    private function executeTraits($type)
-    {
-        if (empty($this->usedTraits))
-        {
-            return;
-        }
-
-        switch ($type)
-        {
-            case 'prolog':
-                $type = 'Prolog';
-            break;
-
-            case 'main':
-                $type = 'Main';
-            break;
-
-            default:
-                $type = 'Epilog';
-            break;
-        }
-
-        foreach ($this->usedTraits as $trait => $name)
-        {
-            $method = 'execute'.$type.$name;
-
-            if (method_exists($trait, $method))
-            {
-                $this->$method();
-            }
-        }
-    }
-
-    /**
-     * Set to $this->usedTraits included traits
-     */
-    private function readUsedTraits()
-    {
-        if ($this->traitsAutoExecute)
-        {
-            $reflection = new \ReflectionClass(get_called_class());
-
-            $parentClass = $reflection;
-
-            while (1)
-            {
-                foreach ($parentClass->getTraitNames() as $trait)
-                {
-                    $this->usedTraits[$trait] = bx_basename($trait);
-                }
-
-                if ($parentClass->name === __CLASS__)
-                {
-                    break;
-                }
-
-                $parentClass = $parentClass->getParentClass();
-            }
-        }
-    }
-
     public function configurate()
     {
         $this->errorNotifier = new ErrorNotifierPlugin();
@@ -122,6 +54,48 @@ abstract class BasisComponent extends \CBitrixComponent
             ->register($this->errorNotifier)
             ->register($this->includer)
             ->register($this->paramsValidator);
+    }
+
+    /**
+     * Show results. Default: include template of the component
+     *
+     * @uses $this->templatePage
+     */
+    public function render()
+    {
+        $this->includeComponentTemplate($this->templatePage);
+    }
+
+    /**
+     * Set status 404 and throw exception
+     *
+     * @todo 404-я должна выкидываться исключением
+     *
+     * @param bool $notifier Sent notify to admin email
+     * @param \Exception|null|false $exception Exception which will be throwing or "false" what not throwing exceptions. Default — throw new \Exception()
+     * @throws \Exception
+     */
+    public function return404($notifier = false, \Exception $exception = null)
+    {
+        @define('ERROR_404', 'Y');
+        \CHTTP::SetStatus('404 Not Found'); // todo Replace on D7
+
+        if ($exception !== false)
+        {
+            if ($notifier === false)
+            {
+                $this->exceptionNotifier = false;
+            }
+
+            if ($exception instanceof \Exception)
+            {
+                throw $exception;
+            }
+            else
+            {
+                throw new \Exception('Page not found');
+            }
+        }
     }
 
     final protected function executeBasis()

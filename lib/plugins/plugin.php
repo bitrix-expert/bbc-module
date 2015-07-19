@@ -13,6 +13,10 @@ abstract class Plugin
      */
     protected $component;
 
+    final public function __construct()
+    {
+    }
+
     public static function getName()
     {
         return get_called_class();
@@ -25,6 +29,5 @@ abstract class Plugin
 
     public function dependencies()
     {
-
     }
 }
