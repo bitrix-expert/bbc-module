@@ -7,7 +7,6 @@
 
 namespace Bex\Bbc\Plugins;
 
-use Bex\Bbc\Plugins\Plugin;
 use Bitrix\Iblock\InheritedProperty;
 use Bitrix\Main\Page\Asset;
 
@@ -17,7 +16,7 @@ use Bitrix\Main\Page\Asset;
  * @todo Add .parameters.php
  * @todo Must be is the Factory or renamed to ElementsSeoPlugin
  */
-class SeoPlugin extends Plugin
+class ElementsSeoPlugin extends Plugin
 {
     public function executeProlog()
     {

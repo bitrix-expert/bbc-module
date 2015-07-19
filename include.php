@@ -24,6 +24,6 @@
     'Bex\Bbc\Plugins\ParamsValidatorPlugin' => 'lib/plugins/paramsvalidator.php',
 
     'Bex\Bbc\Plugins\ElementsParamsPlugin' => 'lib/plugins/elementsparams.php',
-    'Bex\Bbc\Plugins\SeoPlugin' => 'lib/plugins/seo.php',
+    'Bex\Bbc\Plugins\ElementsSeoPlugin' => 'lib/plugins/elementsseo.php',
     'Bex\Bbc\Plugins\HermitagePlugin' => 'lib/plugins/hermitage.php',
 ]);

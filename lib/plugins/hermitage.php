@@ -7,8 +7,6 @@
 
 namespace Bex\Bbc\Plugins;
 
-use Bex\Bbc\Plugins\Plugin;
-
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
