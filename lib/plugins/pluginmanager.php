@@ -65,7 +65,7 @@ class PluginManager
     {
         if ($plugin instanceof Plugin)
         {
-            $this->plugins[$plugin->getName()] = $plugin;
+            $this->plugins[$plugin->getClass()] = $plugin;
 
             $plugin->init($this->component);
         }

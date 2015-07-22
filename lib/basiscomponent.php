@@ -7,6 +7,8 @@
 
 namespace Bex\Bbc;
 
+use Bex\Bbc\Plugins\AjaxPlugin;
+use Bex\Bbc\Plugins\CachePlugin;
 use Bex\Bbc\Plugins\PluginManager;
 use Bex\Bbc\Plugins\IncluderPlugin;
 use Bex\Bbc\Plugins\ErrorNotifierPlugin;
@@ -26,7 +28,7 @@ abstract class BasisComponent extends \CBitrixComponent
     /**
      * @var string Template page name
      */
-    protected $templatePage;
+    public $templatePage;
     /**
      * @var PluginManager
      */
@@ -43,17 +45,29 @@ abstract class BasisComponent extends \CBitrixComponent
      * @var ParamsValidatorPlugin
      */
     public $paramsValidator;
+    /**
+     * @var AjaxPlugin
+     */
+    public $ajax;
+    /**
+     * @var CachePlugin
+     */
+    public $cache;
 
     public function configurate()
     {
         $this->errorNotifier = new ErrorNotifierPlugin();
         $this->includer = new IncluderPlugin();
         $this->paramsValidator = new ParamsValidatorPlugin();
+        $this->ajax = new AjaxPlugin();
+        $this->cache = new CachePlugin();
 
         $this->pluginManager
             ->register($this->errorNotifier)
             ->register($this->includer)
-            ->register($this->paramsValidator);
+            ->register($this->paramsValidator)
+            ->register($this->ajax)
+            ->register($this->cache);
     }
 
     /**
@@ -104,18 +118,14 @@ abstract class BasisComponent extends \CBitrixComponent
 
         $this->pluginManager->trigger('executeInit');
 
-        $this->readUsedTraits();
+        $this->ajax->start();
 
-        $this->startAjax();
-
-        $this->executeTraits('prolog');
         $this->pluginManager->trigger('executeProlog');
         $this->executeProlog();
 
-        if ($this->startCache())
+        if ($this->cache->start())
         {
             $this->executeMain();
-            $this->executeTraits('main');
             $this->pluginManager->trigger('executeMain');
 
             if ($this->cacheTemplate)
@@ -123,7 +133,7 @@ abstract class BasisComponent extends \CBitrixComponent
                 $this->render();
             }
 
-            $this->writeCache();
+            $this->cache->stop();
         }
 
         if (!$this->cacheTemplate)
@@ -131,11 +141,10 @@ abstract class BasisComponent extends \CBitrixComponent
             $this->render();
         }
 
-        $this->executeTraits('epilog');
-        $this->pluginManager->trigger('executeMain');
         $this->executeEpilog();
-
         $this->pluginManager->trigger('executeFinal');
+
+        $this->ajax->stop();
     }
 
     protected function executeProlog()

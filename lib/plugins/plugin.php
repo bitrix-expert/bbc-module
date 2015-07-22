@@ -2,6 +2,8 @@
 
 namespace Bex\Bbc\Plugins;
 
+use Bex\Bbc\BasisComponent;
+
 abstract class Plugin
 {
     /**
@@ -9,7 +11,7 @@ abstract class Plugin
      */
     protected static $instance = [];
     /**
-     * @var \CBitrixComponent
+     * @var BasisComponent
      */
     protected $component;
 
@@ -17,7 +19,7 @@ abstract class Plugin
     {
     }
 
-    public static function getName()
+    public static function getClass()
     {
         return get_called_class();
     }

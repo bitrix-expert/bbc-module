@@ -140,7 +140,10 @@ class ElementsParamsPlugin extends Plugin
                 'bShowAll' => $this->component->arParams['PAGER_SHOW_ALL']
             ];
 
-            $this->component->addCacheAdditionalId(\CDBResult::GetNavParams($this->navStartParams));
+            /**
+             * @todo Раскомментировать. Кеш реализован через плагины, поэтому пришло время подумать о зависимостях
+             */
+//            $this->component->addCacheAdditionalId(\CDBResult::GetNavParams($this->navStartParams));
         }
         elseif ($this->component->arParams['ELEMENTS_COUNT'] > 0)
         {
