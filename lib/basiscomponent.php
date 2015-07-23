@@ -7,6 +7,7 @@
 
 namespace Bex\Bbc;
 
+use Bitrix\Main\Context;
 use Bex\Bbc\Plugins\AjaxPlugin;
 use Bex\Bbc\Plugins\CachePlugin;
 use Bex\Bbc\Plugins\PluginManager;
@@ -21,6 +22,14 @@ use Bex\Bbc\Plugins\ParamsValidatorPlugin;
  */
 abstract class BasisComponent extends \CBitrixComponent
 {
+    /**
+     * @var string Template page default
+     */
+    protected $defaultPage = 'list';
+    /**
+     * @var string Template page default for SEF mode
+     */
+    protected $defaultSefPage = 'list';
     /**
      * @var bool Caching template of the component (default not cache)
      */
@@ -68,6 +77,106 @@ abstract class BasisComponent extends \CBitrixComponent
             ->register($this->paramsValidator)
             ->register($this->ajax)
             ->register($this->cache);
+    }
+
+    public function routers()
+    {
+        return [];
+    }
+
+    public function getRouteVariables()
+    {
+        return [];
+    }
+
+    /**
+     * Is search route
+     *
+     * @return bool
+     */
+    protected function isSearchRoute()
+    {
+        if (strlen($_GET['q']) > 0 && $this->templatePage !== 'detail')
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function readRoute()
+    {
+        if ($this->arParams['SEF_MODE'] === 'Y')
+        {
+            $variables = [];
+
+            $urlTemplates = \CComponentEngine::MakeComponentUrlTemplates(
+                $this->routers(),
+                $this->arParams['SEF_URL_TEMPLATES']
+            );
+
+            $variableAliases = \CComponentEngine::MakeComponentVariableAliases(
+                $this->routers(),
+                $this->arParams['VARIABLE_ALIASES']
+            );
+
+            $this->templatePage = \CComponentEngine::ParseComponentPath(
+                $this->arParams['SEF_FOLDER'],
+                $urlTemplates,
+                $variables
+            );
+
+            if (!$this->templatePage)
+            {
+                if ($this->arParams['SET_404'] === 'Y')
+                {
+                    $folder404 = str_replace('\\', '/', $this->arParams['SEF_FOLDER']);
+
+                    if ($folder404 != '/')
+                    {
+                        $folder404 = '/'.trim($folder404, "/ \t\n\r\0\x0B")."/";
+                    }
+
+                    if (substr($folder404, -1) == '/')
+                    {
+                        $folder404 .= 'index.php';
+                    }
+
+                    if ($folder404 != Context::getCurrent()->getRequest()->getRequestedPage())
+                    {
+                        $this->return404();
+                    }
+                }
+
+                $this->templatePage = $this->defaultSefPage;
+            }
+
+            if ($this->isSearchRoute() && $this->arParams['USE_SEARCH'] === 'Y')
+            {
+                $this->templatePage = 'search';
+            }
+
+            \CComponentEngine::InitComponentVariables(
+                $this->templatePage,
+                $this->getRouteVariables(),
+                $variableAliases,
+                $variables
+            );
+
+            $this->setRoutesResult($this->arParams['SEF_FOLDER'], $urlTemplates, $variables, $variableAliases);
+        }
+        else
+        {
+            $this->templatePage = $this->defaultPage;
+        }
+    }
+
+    protected function setRoutesResult($sefFolder, $urlTemplates, $variables, $variableAliases)
+    {
+        $this->arResult['FOLDER'] = $sefFolder;
+        $this->arResult['URL_TEMPLATES'] = $urlTemplates;
+        $this->arResult['VARIABLES'] = $variables;
+        $this->arResult['ALIASES'] = $variableAliases;
     }
 
     /**
@@ -121,7 +230,7 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->ajax->start();
 
         $this->pluginManager->trigger('executeProlog');
-        $this->executeProlog();
+        $this->beforeAction();
 
         if ($this->cache->start())
         {
@@ -141,13 +250,16 @@ abstract class BasisComponent extends \CBitrixComponent
             $this->render();
         }
 
-        $this->executeEpilog();
+        $this->afterAction();
         $this->pluginManager->trigger('executeFinal');
 
         $this->ajax->stop();
     }
 
-    protected function executeProlog()
+    /**
+     * Invoked before the action component
+     */
+    protected function beforeAction()
     {
     }
 
@@ -155,7 +267,10 @@ abstract class BasisComponent extends \CBitrixComponent
     {
     }
 
-    protected function executeEpilog()
+    /**
+     * Invoked after the action component
+     */
+    protected function afterAction()
     {
     }
 
