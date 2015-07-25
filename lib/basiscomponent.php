@@ -71,6 +71,9 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->ajax = new AjaxPlugin();
         $this->cache = new CachePlugin();
 
+        /**
+         * @todo Мб читать свойства класса?
+         */
         $this->pluginManager
             ->register($this->errorNotifier)
             ->register($this->includer)
@@ -79,7 +82,7 @@ abstract class BasisComponent extends \CBitrixComponent
             ->register($this->cache);
     }
 
-    public function routers()
+    public function routes()
     {
         return [];
     }
@@ -94,9 +97,11 @@ abstract class BasisComponent extends \CBitrixComponent
      *
      * @return bool
      */
-    protected function isSearchRoute()
+    public function isSearchRoute()
     {
-        if (strlen($_GET['q']) > 0 && $this->templatePage !== 'detail')
+        $request = Context::getCurrent()->getRequest();
+
+        if (strlen($request->get('q')) > 0)
         {
             return true;
         }
@@ -111,12 +116,12 @@ abstract class BasisComponent extends \CBitrixComponent
             $variables = [];
 
             $urlTemplates = \CComponentEngine::MakeComponentUrlTemplates(
-                $this->routers(),
+                $this->routes(),
                 $this->arParams['SEF_URL_TEMPLATES']
             );
 
             $variableAliases = \CComponentEngine::MakeComponentVariableAliases(
-                $this->routers(),
+                $this->routes(),
                 $this->arParams['VARIABLE_ALIASES']
             );
 
@@ -229,29 +234,14 @@ abstract class BasisComponent extends \CBitrixComponent
 
         $this->ajax->start();
 
-        $this->pluginManager->trigger('executeProlog');
+        $this->pluginManager->trigger('beforeAction');
         $this->beforeAction();
 
-        if ($this->cache->start())
-        {
-            $this->executeMain();
-            $this->pluginManager->trigger('executeMain');
-
-            if ($this->cacheTemplate)
-            {
-                $this->render();
-            }
-
-            $this->cache->stop();
-        }
-
-        if (!$this->cacheTemplate)
-        {
-            $this->render();
-        }
+        $this->executeMain();
+        $this->pluginManager->trigger('executeMain');
 
         $this->afterAction();
-        $this->pluginManager->trigger('executeFinal');
+        $this->pluginManager->trigger('afterAction');
 
         $this->ajax->stop();
     }
