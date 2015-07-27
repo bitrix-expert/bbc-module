@@ -7,7 +7,6 @@
 
 namespace Bex\Bbc\Plugins;
 
-use Bex\Bbc\Plugins\Plugin;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Application;
 use Bitrix\Main\Context;
@@ -16,13 +15,12 @@ use Bitrix\Main\Config\Option;
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-class ErrorNotifierPlugin extends Plugin
+class CatcherPlugin extends Plugin
 {
     /**
      * @var string File name of log with last exception
      */
     public $exceptionLog = 'exception.log';
-
     /**
      * @var bool Sending notifications to admin email
      */
@@ -42,7 +40,13 @@ class ErrorNotifierPlugin extends Plugin
     {
         global $USER;
 
-        $this->component->abortCache(); // todo
+        /**
+         * @var $cache CacheInterface
+         */
+        $cache = $this->getDependency(PluginTypes::CACHE);
+
+        // todo Что будет, если кеш-плагин не подключен?
+        $cache->start();
 
         if ($USER->IsAdmin())
         {
@@ -123,7 +127,7 @@ class ErrorNotifierPlugin extends Plugin
         echo nl2br($exception);
     }
 
-    public function executeFinal()
+    public function afterAction()
     {
         if ($this->exceptionNotifier)
         {

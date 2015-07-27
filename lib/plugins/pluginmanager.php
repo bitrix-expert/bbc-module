@@ -58,10 +58,11 @@ class PluginManager
 
     /**
      * @param Plugin $plugin Object of plugin
+     * @param string $type Value of constant PLUGIN_TYPE_* from class PluginManager
      *
      * @return $this
      */
-    public function register($plugin)
+    public function register($plugin, $type = PluginTypes::COMMON)
     {
         if ($plugin instanceof Plugin)
         {

@@ -18,7 +18,7 @@ use Bitrix\Main\Page\Asset;
  */
 class ElementsSeoPlugin extends Plugin
 {
-    public function executeProlog()
+    public function beforeAction()
     {
         if ($this->component->arParams['OG_TAGS_IMAGE'])
         {
@@ -26,7 +26,7 @@ class ElementsSeoPlugin extends Plugin
         }
     }
 
-    public function executeMain()
+    public function action()
     {
         if ($this->component->arParams['SECTION_CODE'] && !$this->component->arParams['SECTION_ID'])
         {
@@ -377,7 +377,7 @@ class ElementsSeoPlugin extends Plugin
         }
     }
 
-    public function executeEpilog()
+    public function afterAction()
     {
         $this->setSeoTags();
         $this->setOgTags();

@@ -21,7 +21,7 @@ class IncluderPlugin extends Plugin
      */
     private $needModules = [];
 
-    public function executeInit()
+    public function beforeAction()
     {
         $this->includeModules();
     }

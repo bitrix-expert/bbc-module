@@ -32,7 +32,7 @@ class ElementsParamsPlugin extends Plugin
      */
     public $processingFetchCallable = 'prepareElementsResult';
 
-    public function executeProlog()
+    public function beforeAction()
     {
         $this->setNavStart();
         $this->setFilters();

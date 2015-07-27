@@ -7,12 +7,13 @@
 
 namespace Bex\Bbc;
 
+use Bex\Bbc\Plugins\PluginTypes;
 use Bitrix\Main\Context;
 use Bex\Bbc\Plugins\AjaxPlugin;
 use Bex\Bbc\Plugins\CachePlugin;
 use Bex\Bbc\Plugins\PluginManager;
 use Bex\Bbc\Plugins\IncluderPlugin;
-use Bex\Bbc\Plugins\ErrorNotifierPlugin;
+use Bex\Bbc\Plugins\CatcherPlugin;
 use Bex\Bbc\Plugins\ParamsValidatorPlugin;
 
 /**
@@ -35,7 +36,7 @@ abstract class BasisComponent extends \CBitrixComponent
      */
     public $pluginManager;
     /**
-     * @var ErrorNotifierPlugin
+     * @var CatcherPlugin
      */
     public $errorNotifier;
     /**
@@ -57,21 +58,21 @@ abstract class BasisComponent extends \CBitrixComponent
 
     public function configurate()
     {
-        $this->errorNotifier = new ErrorNotifierPlugin();
+        $this->errorNotifier = new CatcherPlugin();
         $this->includer = new IncluderPlugin();
         $this->paramsValidator = new ParamsValidatorPlugin();
         $this->ajax = new AjaxPlugin();
         $this->cache = new CachePlugin();
 
+        $this->pluginManager
+            ->register($this->cache, PluginTypes::CACHE)
+            ->register($this->ajax, PluginTypes::AJAX)
+            ->register($this->errorNotifier)
+            ->register($this->includer)
+            ->register($this->paramsValidator);
         /**
          * @todo Мб читать свойства класса?
          */
-        $this->pluginManager
-            ->register($this->errorNotifier)
-            ->register($this->includer)
-            ->register($this->paramsValidator)
-            ->register($this->ajax)
-            ->register($this->cache);
     }
 
     public function routes()
@@ -239,9 +240,11 @@ abstract class BasisComponent extends \CBitrixComponent
     {
         $this->readRoute();
 
-        if (method_exists($this, $this->action . 'Action'))
+        $actionMethod = $this->action . 'Action';
+
+        if (method_exists($this, $actionMethod))
         {
-            $this->{$this->action . 'Action'}();
+            $this->{$actionMethod}();
         }
         else
         {

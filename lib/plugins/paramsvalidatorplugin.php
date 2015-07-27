@@ -22,7 +22,7 @@ class ParamsValidatorPlugin extends Plugin
      */
     protected $checkParams = [];
 
-    public function executeInit()
+    public function beforeAction()
     {
         $this->checkParams();
     }

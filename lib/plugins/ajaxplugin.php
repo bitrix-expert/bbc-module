@@ -10,7 +10,7 @@ namespace Bex\Bbc\Plugins;
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-class AjaxPlugin extends Plugin
+class AjaxPlugin extends Plugin implements AjaxInterface
 {
     /**
      * @var string Salt for component ID for AJAX request
@@ -18,7 +18,7 @@ class AjaxPlugin extends Plugin
     protected $ajaxComponentIdSalt;
 
     /**
-     * Restart buffer if AJAX request
+     * {@inheritdoc}
      */
     public function start()
     {
@@ -45,8 +45,6 @@ class AjaxPlugin extends Plugin
 
         if ($this->isAjax())
         {
-            global $APPLICATION;
-
             if ($this->component->arParams['AJAX_HEAD_RELOAD'] === 'Y')
             {
                 $APPLICATION->ShowAjaxHead();
@@ -69,7 +67,7 @@ class AjaxPlugin extends Plugin
     }
 
     /**
-     * Stop execute script if AJAX request
+     * {@inheritdoc}
      */
     public function stop()
     {
@@ -80,9 +78,7 @@ class AjaxPlugin extends Plugin
     }
 
     /**
-     * Is AJAX request
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isAjax()
     {
@@ -99,13 +95,13 @@ class AjaxPlugin extends Plugin
         return false;
     }
 
-    public function executeMain()
+    public function action()
     {
         if (strlen($this->component->arParams['AJAX_PARAM_NAME']) > 0
             && strlen($this->component->arParams['AJAX_COMPONENT_ID']) > 0)
         {
-            $this->component->arResult['AJAX_REQUEST_PARAMS'] = $this->component->arParams['AJAX_PARAM_NAME'] . '='
-                . $this->component->arParams['AJAX_COMPONENT_ID'];
+            $this->component->arResult['AJAX_REQUEST_PARAMS'] =
+                $this->component->arParams['AJAX_PARAM_NAME'] . '='. $this->component->arParams['AJAX_COMPONENT_ID'];
 
             $this->component->setResultCacheKeys(['AJAX_REQUEST_PARAMS']);
         }

@@ -12,7 +12,7 @@ namespace Bex\Bbc\Plugins;
  */
 class HermitagePlugin extends Plugin
 {
-    public function executeMain()
+    public function action()
     {
         if ($this->component->arParams['SECTION_CODE'] && !$this->component->arParams['SECTION_ID'])
         {
@@ -47,7 +47,7 @@ class HermitagePlugin extends Plugin
 
         if (is_array($buttons['intranet']))
         {
-            Asset::getInstance()->addJs(BX_ROOT.'/js/main/utils.js');
+            Asset::getInstance()->addJs(BX_ROOT . '/js/main/utils.js');
 
             foreach ($buttons['intranet'] as $button)
             {
@@ -56,7 +56,7 @@ class HermitagePlugin extends Plugin
         }
     }
 
-    public function executeEpilog()
+    public function afterAction()
     {
         $this->setEditButtons();
     }

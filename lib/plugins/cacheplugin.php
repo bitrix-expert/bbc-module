@@ -12,7 +12,7 @@ use Bitrix\Main\Application;
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-class CachePlugin extends Plugin
+class CachePlugin extends Plugin implements CacheInterface
 {
     /**
      * @var array Additional cache ID
@@ -24,9 +24,7 @@ class CachePlugin extends Plugin
     public $cacheDir = false;
 
     /**
-     * Cache init
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function start()
     {
@@ -59,7 +57,7 @@ class CachePlugin extends Plugin
     }
 
     /**
-     * Write cache to disk
+     * {@inheritdoc}
      */
     public function stop()
     {
@@ -67,7 +65,7 @@ class CachePlugin extends Plugin
     }
 
     /**
-     * Resets the cache
+     * {@inheritdoc}
      */
     public function abort()
     {
@@ -88,9 +86,7 @@ class CachePlugin extends Plugin
     }
 
     /**
-     * Add additional ID to cache
-     *
-     * @param mixed $id
+     * {@inheritdoc}
      */
     public function addId($id)
     {

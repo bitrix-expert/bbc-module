@@ -7,13 +7,14 @@ use Bex\Bbc\BasisComponent;
 abstract class Plugin
 {
     /**
-     * @var static
-     */
-    protected static $instance = [];
-    /**
      * @var BasisComponent
      */
     protected $component;
+    /**
+     * @var int Sorting plugin
+     * @todo Внедрить сортировку в плагины
+     */
+    public $sort = 100;
 
     final public function __construct()
     {
@@ -31,5 +32,10 @@ abstract class Plugin
 
     public function dependencies()
     {
+    }
+
+    protected function getDependency($dependency)
+    {
+        return new CachePlugin();
     }
 }
