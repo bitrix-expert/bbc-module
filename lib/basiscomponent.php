@@ -23,21 +23,13 @@ use Bex\Bbc\Plugins\ParamsValidatorPlugin;
 abstract class BasisComponent extends \CBitrixComponent
 {
     /**
-     * @var string Template page default
+     * @var string Default action name
      */
-    protected $defaultPage = 'list';
+    protected $defaultAction = 'list';
     /**
-     * @var string Template page default for SEF mode
+     * @var string Name of action
      */
-    protected $defaultSefPage = 'list';
-    /**
-     * @var bool Caching template of the component (default not cache)
-     */
-    protected $cacheTemplate = true;
-    /**
-     * @var string Template page name
-     */
-    public $templatePage;
+    public $action;
     /**
      * @var PluginManager
      */
@@ -125,13 +117,13 @@ abstract class BasisComponent extends \CBitrixComponent
                 $this->arParams['VARIABLE_ALIASES']
             );
 
-            $this->templatePage = \CComponentEngine::ParseComponentPath(
+            $this->action = \CComponentEngine::ParseComponentPath(
                 $this->arParams['SEF_FOLDER'],
                 $urlTemplates,
                 $variables
             );
 
-            if (!$this->templatePage)
+            if (!$this->action)
             {
                 if ($this->arParams['SET_404'] === 'Y')
                 {
@@ -153,16 +145,16 @@ abstract class BasisComponent extends \CBitrixComponent
                     }
                 }
 
-                $this->templatePage = $this->defaultSefPage;
+                $this->action = $this->defaultAction;
             }
 
             if ($this->isSearchRoute() && $this->arParams['USE_SEARCH'] === 'Y')
             {
-                $this->templatePage = 'search';
+                $this->action = 'search';
             }
 
             \CComponentEngine::InitComponentVariables(
-                $this->templatePage,
+                $this->action,
                 $this->getRouteVariables(),
                 $variableAliases,
                 $variables
@@ -172,7 +164,7 @@ abstract class BasisComponent extends \CBitrixComponent
         }
         else
         {
-            $this->templatePage = $this->defaultPage;
+            $this->action = $this->defaultAction;
         }
     }
 
@@ -182,16 +174,6 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->arResult['URL_TEMPLATES'] = $urlTemplates;
         $this->arResult['VARIABLES'] = $variables;
         $this->arResult['ALIASES'] = $variableAliases;
-    }
-
-    /**
-     * Show results. Default: include template of the component
-     *
-     * @uses $this->templatePage
-     */
-    public function render()
-    {
-        $this->includeComponentTemplate($this->templatePage);
     }
 
     /**
@@ -237,8 +219,8 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->pluginManager->trigger('beforeAction');
         $this->beforeAction();
 
-        $this->executeMain();
-        $this->pluginManager->trigger('executeMain');
+        $this->executeAction();
+        $this->pluginManager->trigger('action');
 
         $this->afterAction();
         $this->pluginManager->trigger('afterAction');
@@ -253,8 +235,19 @@ abstract class BasisComponent extends \CBitrixComponent
     {
     }
 
-    protected function executeMain()
+    protected function executeAction()
     {
+        $this->readRoute();
+
+        if (method_exists($this, $this->action . 'Action'))
+        {
+            $this->{$this->action . 'Action'}();
+        }
+        else
+        {
+            // @todo 404
+            throw new \Exception('not found');
+        }
     }
 
     /**

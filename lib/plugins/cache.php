@@ -35,9 +35,9 @@ class CachePlugin extends Plugin
         if ($this->component->arParams['CACHE_TYPE'] && $this->component->arParams['CACHE_TYPE'] !== 'N'
             && $this->component->arParams['CACHE_TIME'] > 0)
         {
-            if ($this->component->templatePage)
+            if ($this->component->action)
             {
-                $this->additionalId[] = $this->component->templatePage;
+                $this->additionalId[] = $this->component->action;
             }
 
             if ($this->component->arParams['CACHE_GROUPS'] === 'Y')
