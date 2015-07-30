@@ -102,7 +102,7 @@ abstract class BasisComponent extends \CBitrixComponent
         return false;
     }
 
-    protected function readRoute()
+    protected function initRouter()
     {
         if ($this->arParams['SEF_MODE'] === 'Y')
         {
@@ -211,6 +211,8 @@ abstract class BasisComponent extends \CBitrixComponent
 
     final protected function executeBasis()
     {
+        $this->initRouter();
+
         $this->pluginManager = new PluginManager($this);
 
         $this->pluginManager->trigger('executeInit');
@@ -220,7 +222,7 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->pluginManager->trigger('beforeAction');
         $this->beforeAction();
 
-        $this->executeAction();
+        $this->runAction();
         $this->pluginManager->trigger('action');
 
         $this->afterAction();
@@ -236,10 +238,8 @@ abstract class BasisComponent extends \CBitrixComponent
     {
     }
 
-    protected function executeAction()
+    protected function runAction()
     {
-        $this->readRoute();
-
         $actionMethod = $this->action . 'Action';
 
         if (method_exists($this, $actionMethod))
