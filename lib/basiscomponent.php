@@ -38,7 +38,7 @@ abstract class BasisComponent extends \CBitrixComponent
     /**
      * @var CatcherPlugin
      */
-    public $errorNotifier;
+    public $catcher;
     /**
      * @var IncluderPlugin
      */
@@ -58,7 +58,7 @@ abstract class BasisComponent extends \CBitrixComponent
 
     public function configurate()
     {
-        $this->errorNotifier = new CatcherPlugin();
+        $this->catcher = new CatcherPlugin();
         $this->includer = new IncluderPlugin();
         $this->paramsValidator = new ParamsValidatorPlugin();
         $this->ajax = new AjaxPlugin();
@@ -67,7 +67,7 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->pluginManager
             ->register($this->cache, PluginTypes::CACHE)
             ->register($this->ajax, PluginTypes::AJAX)
-            ->register($this->errorNotifier)
+            ->register($this->catcher)
             ->register($this->includer)
             ->register($this->paramsValidator);
         /**
@@ -265,7 +265,7 @@ abstract class BasisComponent extends \CBitrixComponent
         try {
             $this->executeBasis();
         } catch (\Exception $e) {
-            $this->errorNotifier->catchException($e);
+            $this->catcher->catchException($e);
         }
     }
 }

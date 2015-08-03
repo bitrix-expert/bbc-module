@@ -10,6 +10,8 @@ namespace Bex\Bbc\Plugins;
 use Bitrix\Main\Application;
 
 /**
+ * Plugin for cached components
+ *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 class CachePlugin extends Plugin implements CacheInterface
