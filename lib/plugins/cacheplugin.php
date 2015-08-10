@@ -16,6 +16,7 @@ use Bitrix\Main\Application;
  */
 class CachePlugin extends Plugin implements CacheInterface
 {
+    private $type = PluginTypes::CACHE;
     /**
      * @var array Additional cache ID
      */

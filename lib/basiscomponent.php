@@ -65,8 +65,8 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->cache = new CachePlugin();
 
         $this->pluginManager
-            ->register($this->cache, PluginTypes::CACHE)
-            ->register($this->ajax, PluginTypes::AJAX)
+            ->register($this->cache)
+            ->register($this->ajax)
             ->register($this->catcher)
             ->register($this->includer)
             ->register($this->paramsValidator);

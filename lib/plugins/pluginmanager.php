@@ -58,17 +58,25 @@ class PluginManager
 
     /**
      * @param Plugin $plugin Object of plugin
-     * @param string $type Value of constant PLUGIN_TYPE_* from class PluginManager
      *
      * @return $this
      */
-    public function register($plugin, $type = PluginTypes::COMMON)
+    public function register($plugin)
     {
         if ($plugin instanceof Plugin)
         {
-            $this->plugins[$plugin->getClass()] = $plugin;
+            $this->plugins[$plugin::className()] = $plugin;
 
             $plugin->init($this->component);
+
+            foreach ($plugin->dependencies() as $dependency)
+            {
+                $this->register($dependency);
+            }
+
+            /**
+             * @todo Register plugin type
+             */
         }
         else
         {
