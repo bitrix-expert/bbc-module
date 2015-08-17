@@ -26,7 +26,7 @@ abstract class BasisComponent extends \CBitrixComponent
     /**
      * @var string Default action name
      */
-    protected $defaultAction = 'list';
+    public $defaultAction = 'index';
     /**
      * @var string Name of action
      */
