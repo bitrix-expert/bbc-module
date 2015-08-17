@@ -17,12 +17,15 @@ use Bex\Bbc\BasisComponent;
  */
 class PluginManager
 {
+    protected $component;
     /**
      * @var array
      */
     private $plugins;
-
-    protected $component;
+    /**
+     * @var array
+     */
+    private $pluginsByTypes;
 
     /**
      * @param BasisComponent $component
@@ -35,6 +38,8 @@ class PluginManager
 
         $component->pluginManager = $this;
         $component->configurate();
+
+        $this->sort();
     }
 
     /**
@@ -44,6 +49,8 @@ class PluginManager
      */
     public function trigger($action)
     {
+        $this->init();
+
         if (!empty($this->plugins))
         {
             foreach ($this->plugins as $instance)
@@ -56,6 +63,29 @@ class PluginManager
         }
     }
 
+    private function sort()
+    {
+        usort($this->plugins, function($previous, $next) {
+            /**
+             * @var Plugin $previous
+             * @var Plugin $next
+             */
+
+            if ($previous->getSort() === $next->getSort())
+            {
+                return 0;
+            }
+            elseif ($previous->getSort() < $next->getSort())
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        });
+    }
+
     /**
      * @param Plugin $plugin Object of plugin
      *
@@ -65,6 +95,11 @@ class PluginManager
     {
         if ($plugin instanceof Plugin)
         {
+            if (isset($this->plugins[$plugin::className()]))
+            {
+                return $this;
+            }
+
             $this->plugins[$plugin::className()] = $plugin;
 
             $plugin->init($this->component);
@@ -74,9 +109,7 @@ class PluginManager
                 $this->register($dependency);
             }
 
-            /**
-             * @todo Register plugin type
-             */
+            $this->pluginsByTypes[$plugin->getType()] = &$plugin;
         }
         else
         {
@@ -100,8 +133,18 @@ class PluginManager
         return $this;
     }
 
-    public function get($pluginName)
+    /**
+     * @param string $plugin Class name of plugin or type of plugin
+     *
+     * @return Plugin
+     */
+    public function get($plugin)
     {
-        return $this->plugins[$pluginName];
+        if ($this->pluginsByTypes[$plugin])
+        {
+            return $this->pluginsByTypes[$plugin];
+        }
+
+        return $this->plugins[$plugin];
     }
 }
