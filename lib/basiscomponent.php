@@ -7,7 +7,7 @@
 
 namespace Bex\Bbc;
 
-use Bex\Bbc\Plugins\PluginTypes;
+use Bex\Bbc\Plugins\PluginInterface;
 use Bitrix\Main\Context;
 use Bex\Bbc\Plugins\AjaxPlugin;
 use Bex\Bbc\Plugins\CachePlugin;
@@ -264,7 +264,9 @@ abstract class BasisComponent extends \CBitrixComponent
     {
         try {
             $this->executeBasis();
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             $this->catcher->catchException($e);
         }
     }

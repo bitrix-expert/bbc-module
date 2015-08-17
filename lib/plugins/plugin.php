@@ -8,18 +8,21 @@ use Bitrix\Main\ArgumentTypeException;
 abstract class Plugin
 {
     /**
+     * @var int Sorting plugin. Determines the order of plugins execution
+     */
+    private $sort = 100;
+    /**
+     * @var string Type interface of plugin. Takes the value of the \Bex\Bbc\Plugins\PluginInterface
+     */
+    private $interface = PluginInterface::TYPICAL;
+    /**
      * @var BasisComponent
      */
     protected $component;
     /**
-     * @var int Sorting plugin. Determines the order of plugins execution
-     * @todo Внедрить сортировку в плагины
+     * @var PluginManager
      */
-    private $sort = 100;
-    /**
-     * @var string Type of plugin. Takes the value of the \Bex\Bbc\Plugins\PluginTypes interface
-     */
-    private $type = PluginTypes::COMMON;
+    private $pluginManager;
 
     final public function __construct()
     {
@@ -45,19 +48,19 @@ abstract class Plugin
         return $this->sort;
     }
 
-    public function setType($type)
+    public function setInterface($interface)
     {
-        if (!is_string($type))
+        if (!is_string($interface))
         {
             throw new ArgumentTypeException('Type of the plugin must be string');
         }
 
-        $this->type = $type;
+        $this->interface = $interface;
     }
 
-    public function getType()
+    public function getInterface()
     {
-        return $this->type;
+        return $this->interface;
     }
 
     public function dependencies()
@@ -67,6 +70,20 @@ abstract class Plugin
 
     protected function getDependency($pluginName)
     {
-        return new CachePlugin();
+
+    }
+
+    /**
+     * Gets the plugin object that implements one of the interfaces
+     *
+     * @param string $interface Type of plugin. Use constants of \Bex\Bbc\Plugins\PluginTypes
+     *
+     * @return Plugin
+     *
+     * @throws PluginNotFoundExeption
+     */
+    protected function getImplementsPlugin($interface)
+    {
+        return $this->pluginManager->getByInterface($interface);
     }
 }

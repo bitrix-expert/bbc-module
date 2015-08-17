@@ -27,26 +27,31 @@ class CatcherPlugin extends Plugin
     public $exceptionNotifier = true;
 
     /**
-     * Called when an error occurs
+     * Called when an error occurs.
      *
      * Resets the cache, show error message (two mode: for users and for admins),
      * sending notification to admin email
      *
      * @param \Exception $exception
      * @param bool $notifier Sent notify to admin email. Default — value of property $this->exceptionNotifier
+     *
      * @uses exceptionNotifier
      */
     public function catchException(\Exception $exception, $notifier = null)
     {
         global $USER;
 
-        /**
-         * @var $cache CacheInterface
-         */
-        $cache = $this->getDependency(PluginTypes::CACHE);
+        try {
+            /**
+             * @var $cache CacheInterface
+             */
+            $cache = $this->getImplementsPlugin(PluginInterface::CACHE);
 
-        // todo Что будет, если кеш-плагин не подключен?
-        $cache->start();
+            $cache->stop();
+        }
+        catch (PluginNotFoundExeption $e)
+        {
+        }
 
         if ($USER->IsAdmin())
         {

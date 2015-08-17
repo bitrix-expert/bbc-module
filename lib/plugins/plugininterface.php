@@ -10,18 +10,18 @@ namespace Bex\Bbc\Plugins;
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-interface PluginTypes
+interface PluginInterface
 {
     /**
-     * Type of common plugins (by default)
+     * Type interface of typical plugins (by default)
      */
-    const COMMON = 'common';
+    const TYPICAL = 'typical';
     /**
-     * Type of plugins for cache
+     * Type interface of plugins for cache
      */
     const CACHE = 'cache';
     /**
-     * Type of plugins for AJAX
+     * Type interface of plugins for AJAX
      */
     const AJAX = 'ajax';
 }

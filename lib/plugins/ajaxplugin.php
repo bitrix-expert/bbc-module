@@ -12,7 +12,7 @@ namespace Bex\Bbc\Plugins;
  */
 class AjaxPlugin extends Plugin implements AjaxInterface
 {
-    private $type = PluginTypes::AJAX;
+    private $interface = PluginInterface::AJAX;
     /**
      * @var string Salt for component ID for AJAX request
      */

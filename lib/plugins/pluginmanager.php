@@ -39,7 +39,7 @@ class PluginManager
         $component->pluginManager = $this;
         $component->configurate();
 
-        $this->sort();
+        $this->prepare();
     }
 
     /**
@@ -49,8 +49,6 @@ class PluginManager
      */
     public function trigger($action)
     {
-        $this->init();
-
         if (!empty($this->plugins))
         {
             foreach ($this->plugins as $instance)
@@ -63,7 +61,10 @@ class PluginManager
         }
     }
 
-    private function sort()
+    /**
+     * Preparatory operations after register of plugins
+     */
+    private function prepare()
     {
         usort($this->plugins, function($previous, $next) {
             /**
@@ -109,7 +110,7 @@ class PluginManager
                 $this->register($dependency);
             }
 
-            $this->pluginsByTypes[$plugin->getType()] = &$plugin;
+            $this->pluginsByTypes[$plugin->getInterface()] = &$plugin;
         }
         else
         {
@@ -134,17 +135,60 @@ class PluginManager
     }
 
     /**
-     * @param string $plugin Class name of plugin or type of plugin
+     * Get plugin object by his name.
+     *
+     * For example:
+     *
+     * ```
+     * use Bex\Bbc\Plugins\IncluderPlugin;
+     *
+     * $plugin = $this->pluginManager->get(IncluderPlugin::className());
+     * ```
+     *
+     * @param string $plugin Name of plugin
      *
      * @return Plugin
+     *
+     * @throws PluginNotFoundExeption
      */
     public function get($plugin)
     {
-        if ($this->pluginsByTypes[$plugin])
+        if (isset($this->plugins[$plugin]))
         {
-            return $this->pluginsByTypes[$plugin];
+            return $this->plugins[$plugin];
         }
+        else
+        {
+            throw new PluginNotFoundExeption('Plugin "' . $plugin .'" not found', $plugin);
+        }
+    }
 
-        return $this->plugins[$plugin];
+    /**
+     * Get plugin object by his type.
+     *
+     * For example:
+     *
+     * ```
+     * use Bex\Bbc\Plugins\PluginInterface;
+     *
+     * $plugin = $this->pluginManager->get(PluginInterface::CACHE);
+     * ```
+     *
+     * @param string $interface Interface of plugin
+     *
+     * @return Plugin
+     *
+     * @throws PluginNotFoundExeption
+     */
+    public function getByInterface($interface)
+    {
+        if (isset($this->pluginsByTypes[$interface]))
+        {
+            return $this->pluginsByTypes[$interface];
+        }
+        else
+        {
+            throw new PluginNotFoundExeption('Plugin for "' . $interface . '" interface not found', $interface);
+        }
     }
 }
