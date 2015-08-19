@@ -31,6 +31,17 @@ class ElementsParamsPlugin extends Plugin
      * @var string Method name for prepare result request of the elements
      */
     public $processingFetchCallable = 'prepareElementsResult';
+    /**
+     * @var CacheInterface Plugin for working with cache
+     */
+    protected $cache = null;
+
+    public function init(\CBitrixComponent $component)
+    {
+        parent::init($component);
+
+        $this->cache = $this->getPlugin(PluginInterface::CACHE);
+    }
 
     public function beforeAction()
     {
@@ -140,10 +151,10 @@ class ElementsParamsPlugin extends Plugin
                 'bShowAll' => $this->component->arParams['PAGER_SHOW_ALL']
             ];
 
-            /**
-             * @todo Раскомментировать. Кеш реализован через плагины, поэтому пришло время подумать о зависимостях
-             */
-//            $this->component->addCacheAdditionalId(\CDBResult::GetNavParams($this->navStartParams));
+            if ($this->cache)
+            {
+                $this->cache->addId(\CDBResult::GetNavParams($this->navStartParams));
+            }
         }
         elseif ($this->component->arParams['ELEMENTS_COUNT'] > 0)
         {
@@ -159,7 +170,7 @@ class ElementsParamsPlugin extends Plugin
     }
 
     /**
-     * Getting global filter and write his to component parameters
+     * Setting filters. Reading of the global filter and writing his to component parameters
      */
     public function setFilters()
     {
@@ -215,16 +226,9 @@ class ElementsParamsPlugin extends Plugin
         {
             $this->filterParams = array_merge_recursive($this->filterParams, $globalFilter);
 
-            /**
-             * @todo Add dependency
-             */
-            if (method_exists($this->component, 'addCacheAdditionalId'))
+            if ($this->cache)
             {
-                $this->component->addCacheAdditionalId($globalFilter);
-            }
-            else
-            {
-                $this->component->arParams[$this->component->arParams['EX_FILTER_NAME'].'_VALUE'] = $globalFilter;
+                $this->cache->addId($globalFilter);
             }
         }
     }
@@ -240,16 +244,9 @@ class ElementsParamsPlugin extends Plugin
         {
             $this->filterParams = array_merge_recursive($this->filterParams, $fields);
 
-            /**
-             * @todo Add dependency
-             */
-            if (method_exists($this->component, 'addCacheAdditionalId'))
+            if ($this->cache)
             {
-                $this->component->addCacheAdditionalId($fields);
-            }
-            else
-            {
-                $this->component->arParams[$this->component->arParams['EX_FILTER_NAME'].'_VALUE'] += $fields;
+                $this->cache->addId($fields);
             }
         }
     }

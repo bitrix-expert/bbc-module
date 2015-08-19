@@ -20,7 +20,7 @@ class CachePlugin extends Plugin implements CacheInterface
     /**
      * @var array Additional cache ID
      */
-    private $additionalId;
+    protected $additionalId;
     /**
      * @var string Cache dir
      */

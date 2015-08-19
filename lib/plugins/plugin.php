@@ -40,7 +40,7 @@ abstract class Plugin
 
     public function setSort($sort)
     {
-
+        $this->sort = intval($sort);
     }
 
     public function getSort()
@@ -68,22 +68,15 @@ abstract class Plugin
         return [];
     }
 
-    protected function getDependency($pluginName)
-    {
-
-    }
-
     /**
-     * Gets the plugin object that implements one of the interfaces
+     * Gets the plugin object
      *
-     * @param string $interface Type of plugin. Use constants of \Bex\Bbc\Plugins\PluginTypes
+     * @param string $plugin Class name or type of plugin (use constants of \Bex\Bbc\Plugins\PluginTypes)
      *
-     * @return Plugin
-     *
-     * @throws PluginNotFoundException
+     * @return Plugin|null
      */
-    protected function getImplementsPlugin($interface)
+    protected function getPlugin($plugin)
     {
-        return $this->pluginManager->getByInterface($interface);
+        return $this->pluginManager->get($plugin);
     }
 }

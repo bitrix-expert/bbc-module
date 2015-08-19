@@ -7,7 +7,6 @@
 
 namespace Bex\Bbc\Plugins;
 
-use Bitrix\Main\ArgumentTypeException;
 use Bex\Bbc\BasisComponent;
 
 /**
@@ -25,19 +24,17 @@ class PluginManager
     /**
      * @var array
      */
-    private $pluginsByTypes;
+    private $pluginsByInterface;
 
     /**
      * @param BasisComponent $component
-     *
-     * @throws ArgumentTypeException
      */
     public function __construct($component)
     {
-        $this->component = $component;
-
         $component->pluginManager = $this;
         $component->configurate();
+
+        $this->component = $component;
 
         $this->prepare();
     }
@@ -110,7 +107,7 @@ class PluginManager
                 $this->register($dependency);
             }
 
-            $this->pluginsByTypes[$plugin->getInterface()] = &$plugin;
+            $this->pluginsByInterface[$plugin->getInterface()] = &$plugin;
         }
         else
         {
@@ -135,60 +132,39 @@ class PluginManager
     }
 
     /**
-     * Get plugin object by his name.
+     * Get plugin object by his name or interface.
      *
      * For example:
      *
      * ```
+     * // by interface
+     * use Bex\Bbc\Plugins\PluginInterface;
+     *
+     * $plugin = $this->pluginManager->get(PluginInterface::CACHE);
+     *
+     * // by class name
      * use Bex\Bbc\Plugins\IncluderPlugin;
      *
      * $plugin = $this->pluginManager->get(IncluderPlugin::className());
      * ```
      *
-     * @param string $plugin Name of plugin
+     * @param string $plugin Name or interface of plugin
      *
-     * @return Plugin
-     *
-     * @throws PluginNotFoundException
+     * @return Plugin|null
      */
     public function get($plugin)
     {
-        if (isset($this->plugins[$plugin]))
+        if (isset($this->pluginsByInterface[$plugin]))
+        {
+            return $this->pluginsByInterface[$plugin];
+        }
+        elseif (isset($this->plugins[$plugin]))
         {
             return $this->plugins[$plugin];
         }
         else
         {
-            throw new PluginNotFoundException('Plugin "' . $plugin .'" not found', $plugin);
-        }
-    }
-
-    /**
-     * Gets plugin object by his type.
-     *
-     * For example:
-     *
-     * ```
-     * use Bex\Bbc\Plugins\PluginInterface;
-     *
-     * $plugin = $this->pluginManager->get(PluginInterface::CACHE);
-     * ```
-     *
-     * @param string $interface Interface of plugin
-     *
-     * @return Plugin
-     *
-     * @throws PluginNotFoundException
-     */
-    public function getByInterface($interface)
-    {
-        if (isset($this->pluginsByTypes[$interface]))
-        {
-            return $this->pluginsByTypes[$interface];
-        }
-        else
-        {
-            throw new PluginNotFoundException('Plugin for "' . $interface . '" interface not found', $interface);
+            return null;
         }
     }
 }

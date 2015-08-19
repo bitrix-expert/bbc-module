@@ -41,16 +41,15 @@ class CatcherPlugin extends Plugin
     {
         global $USER;
 
-        try {
-            /**
-             * @var $cache CacheInterface
-             */
-            $cache = $this->getImplementsPlugin(PluginInterface::CACHE);
+        /**
+         * @var $cache CacheInterface
+         * @todo Move to init()
+         */
+        $cache = $this->getPlugin(PluginInterface::CACHE);
 
-            $cache->stop();
-        }
-        catch (PluginNotFoundException $e)
+        if ($cache)
         {
+            $cache->stop();
         }
 
         if ($USER->IsAdmin())
