@@ -80,7 +80,7 @@ abstract class Plugin
      *
      * @return Plugin
      *
-     * @throws PluginNotFoundExeption
+     * @throws PluginNotFoundException
      */
     protected function getImplementsPlugin($interface)
     {

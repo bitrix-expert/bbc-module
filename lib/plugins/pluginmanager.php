@@ -149,7 +149,7 @@ class PluginManager
      *
      * @return Plugin
      *
-     * @throws PluginNotFoundExeption
+     * @throws PluginNotFoundException
      */
     public function get($plugin)
     {
@@ -159,12 +159,12 @@ class PluginManager
         }
         else
         {
-            throw new PluginNotFoundExeption('Plugin "' . $plugin .'" not found', $plugin);
+            throw new PluginNotFoundException('Plugin "' . $plugin .'" not found', $plugin);
         }
     }
 
     /**
-     * Get plugin object by his type.
+     * Gets plugin object by his type.
      *
      * For example:
      *
@@ -178,7 +178,7 @@ class PluginManager
      *
      * @return Plugin
      *
-     * @throws PluginNotFoundExeption
+     * @throws PluginNotFoundException
      */
     public function getByInterface($interface)
     {
@@ -188,7 +188,7 @@ class PluginManager
         }
         else
         {
-            throw new PluginNotFoundExeption('Plugin for "' . $interface . '" interface not found', $interface);
+            throw new PluginNotFoundException('Plugin for "' . $interface . '" interface not found', $interface);
         }
     }
 }

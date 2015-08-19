@@ -49,7 +49,7 @@ class CatcherPlugin extends Plugin
 
             $cache->stop();
         }
-        catch (PluginNotFoundExeption $e)
+        catch (PluginNotFoundException $e)
         {
         }
 

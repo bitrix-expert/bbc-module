@@ -2,7 +2,7 @@
 
 namespace Bex\Bbc\Plugins;
 
-class PluginNotFoundExeption extends \Exception
+class PluginNotFoundException extends \Exception
 {
     protected $plugin;
 
