@@ -33,21 +33,52 @@ abstract class Plugin
         return get_called_class();
     }
 
-    public function init(\CBitrixComponent $component)
+    /**
+     * Initialization of the plugin
+     *
+     * @param BasisComponent $component Component object
+     */
+    final public function init(BasisComponent $component)
     {
         $this->component = $component;
+
+        $this->configurate();
     }
 
+    /**
+     * Configuration plugin. Method for configurate your plugin before his work
+     */
+    public function configurate()
+    {
+    }
+
+    /**
+     * Set sorting of plugin
+     *
+     * @param int $sort
+     */
     public function setSort($sort)
     {
         $this->sort = intval($sort);
     }
 
+    /**
+     * Gets the sorting plugin
+     *
+     * @return int
+     */
     public function getSort()
     {
         return $this->sort;
     }
 
+    /**
+     * Sets interface for the plugin
+     *
+     * @param string $interface Interface of plugin. One of constant \Bex\Bbc\Plugins\PluginInterface
+     *
+     * @throws ArgumentTypeException If $interface not string
+     */
     public function setInterface($interface)
     {
         if (!is_string($interface))
@@ -58,6 +89,11 @@ abstract class Plugin
         $this->interface = $interface;
     }
 
+    /**
+     * Gets current interface of the plugin
+     *
+     * @return string
+     */
     public function getInterface()
     {
         return $this->interface;
@@ -77,6 +113,6 @@ abstract class Plugin
      */
     protected function getPlugin($plugin)
     {
-        return $this->pluginManager->get($plugin);
+        return $this->component->pluginManager->get($plugin);
     }
 }

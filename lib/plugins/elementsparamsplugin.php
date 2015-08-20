@@ -36,10 +36,8 @@ class ElementsParamsPlugin extends Plugin
      */
     protected $cache = null;
 
-    public function init(\CBitrixComponent $component)
+    public function configurate()
     {
-        parent::init($component);
-
         $this->cache = $this->getPlugin(PluginInterface::CACHE);
     }
 

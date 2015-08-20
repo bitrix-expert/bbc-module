@@ -73,6 +73,7 @@ abstract class BasisComponent extends \CBitrixComponent
         /**
          * @todo Мб читать свойства класса?
          */
+
     }
 
     public function routes()

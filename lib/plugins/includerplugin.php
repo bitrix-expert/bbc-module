@@ -29,7 +29,6 @@ class IncluderPlugin extends Plugin
     /**
      * Include modules
      *
-     * @uses $this->needModules
      * @throws \Bitrix\Main\LoaderException
      */
     public function includeModules()

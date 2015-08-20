@@ -31,10 +31,10 @@ class PluginManager
      */
     public function __construct($component)
     {
+        $this->component = $component;
+
         $component->pluginManager = $this;
         $component->configurate();
-
-        $this->component = $component;
 
         $this->prepare();
     }

@@ -25,6 +25,15 @@ class CatcherPlugin extends Plugin
      * @var bool Sending notifications to admin email
      */
     public $exceptionNotifier = true;
+    /**
+     * @var CacheInterface Plugin for working with cache
+     */
+    protected $cache;
+
+    public function configurate()
+    {
+        $this->cache = $this->getPlugin(PluginInterface::CACHE);
+    }
 
     /**
      * Called when an error occurs.
@@ -41,15 +50,9 @@ class CatcherPlugin extends Plugin
     {
         global $USER;
 
-        /**
-         * @var $cache CacheInterface
-         * @todo Move to init()
-         */
-        $cache = $this->getPlugin(PluginInterface::CACHE);
-
-        if ($cache)
+        if ($this->cache)
         {
-            $cache->stop();
+            $this->cache->stop();
         }
 
         if ($USER->IsAdmin())
