@@ -136,7 +136,7 @@ class PluginManager
      *
      * For example:
      *
-     * ```
+     * ```php
      * // by interface
      * use Bex\Bbc\Plugins\PluginInterface;
      *

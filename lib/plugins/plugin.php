@@ -1,10 +1,42 @@
 <?php
+/**
+ * @link http://bbc.bitrix.expert
+ * @copyright Copyright © 2015 Nik Samokhvalov
+ * @license MIT
+ */
 
 namespace Bex\Bbc\Plugins;
 
 use Bex\Bbc\BasisComponent;
 use Bitrix\Main\ArgumentTypeException;
 
+/**
+ * Abstract class for plugin realization.
+ *
+ * The plugin is object, who running in parallel with component. Component performs the role of the event manager:
+ * registers the plugins and trigger their if you experience event.
+ *
+ * Example registering plugins on your component:
+ *
+ * ```php
+ * use Bex\Bbc\BasisComponent;
+ * use Bex\Bbc\Plugins\CatcherPlugin;
+ * use Bex\Bbc\Plugins\IncluderPlugin;
+ *
+ * class MyComponent extends BasisComponent
+ * {
+ *      public function configurate()
+ *      {
+ *          $this->catcher = new CatcherPlugin();
+ *          $this->includer = new IncluderPlugin();
+ *
+ *          $this->pluginManager
+ *              ->register($this->catcher)
+ *              ->register($this->includer);
+ *      }
+ * }
+ * ```
+ */
 abstract class Plugin
 {
     /**
@@ -28,6 +60,11 @@ abstract class Plugin
     {
     }
 
+    /**
+     * Returns the fully qualified name of this class
+     *
+     * @return string
+     */
     public static function className()
     {
         return get_called_class();
