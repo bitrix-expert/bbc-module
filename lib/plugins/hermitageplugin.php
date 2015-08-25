@@ -8,6 +8,14 @@
 namespace Bex\Bbc\Plugins;
 
 /**
+ * Hermitage it is plugin, which show admin interface on public pages for editing content from info blocks.
+ *
+ * What would plugin showed the admin interface, after action must be:
+ * - `IBLOCK_ID` and `SECTION_ID` in `arParams` property in the component class,
+ * - `ID` in `arResult` property in the component class.
+ *
+ * @see https://www.1c-bitrix.ru/products/intranet/hermitage.php
+ *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 class HermitagePlugin extends Plugin
@@ -33,7 +41,7 @@ class HermitagePlugin extends Plugin
 
         if (!$APPLICATION->GetShowIncludeAreas())
         {
-            return false;
+            return;
         }
 
         $buttons = \CIBlock::GetPanelButtons(
