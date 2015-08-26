@@ -75,11 +75,17 @@ abstract class BasisComponent extends \CBitrixComponent
 
     }
 
+    /**
+     * @return array
+     */
     public function routes()
     {
         return [];
     }
 
+    /**
+     * @return array
+     */
     public function getRouteVariables()
     {
         return [];
@@ -211,9 +217,9 @@ abstract class BasisComponent extends \CBitrixComponent
 
     final protected function executeBasis()
     {
-        $this->initRouter();
-
         $this->pluginManager = new PluginManager($this);
+
+        $this->initRouter();
 
         $this->pluginManager->trigger('executeInit');
 
@@ -248,8 +254,7 @@ abstract class BasisComponent extends \CBitrixComponent
         }
         else
         {
-            // @todo 404
-            throw new \Exception('not found');
+            throw new \BadMethodCallException('Method for action "' . $this->action . '" is missing');
         }
     }
 
