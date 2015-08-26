@@ -129,7 +129,7 @@ class ElementsParamsPlugin extends Plugin
             }
         }
 
-        return false;
+        return $elementResult;
     }
 
     public function setNavStart()

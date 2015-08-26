@@ -7,7 +7,6 @@
 
 namespace Bex\Bbc;
 
-use Bex\Bbc\Plugins\PluginInterface;
 use Bitrix\Main\Context;
 use Bex\Bbc\Plugins\AjaxPlugin;
 use Bex\Bbc\Plugins\CachePlugin;
