@@ -69,13 +69,49 @@ abstract class BasisComponent extends \CBitrixComponent
             ->register($this->catcher)
             ->register($this->includer)
             ->register($this->paramsValidator);
-        /**
-         * @todo Мб читать свойства класса?
-         */
-
     }
 
     /**
+     * Configuring routes which can be component processed.
+     *
+     * Method must return array with configs describing routes.
+     *
+     * **Simple route configs**
+     * ```php
+     * return [
+     *      'index' => '',
+     *      'section' => '#SECTION_ID#/',
+     *      'detail' => '#SECTION_ID#/#ELEMENT_ID#/'
+     * ];
+     * ```
+     * * Key (index, section, detail) - action name.
+     * * Value - SEF template for route
+     *
+     * **Routes with different requested methods**
+     * ```php
+     * return [
+     *      'users' => [
+     *          'template' => '',
+     *          'method' => [
+     *              'GET' => 'getUser',
+     *              'POST' => 'addUser',
+     *              'OPTION' => 'option',
+     *          ]
+     *      ],
+     *      'user' => [
+     *          'template' => '#USER_ID#',
+     *          'method' => [
+     *              'GET' => 'getUser',
+     *              'POST|PUT' => 'updateUser',
+     *              'DELETE' => 'deleteUser',
+     *          ]
+     *      ]
+     * ];
+     * ```
+     * * Key (user, users) - action name.
+     * * Value[template] - SEF template for route
+     * * Value[method] - compliance requested methods of the class methods (request method => action name)
+     *
      * @return array
      */
     public function routes()
