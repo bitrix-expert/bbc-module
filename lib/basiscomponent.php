@@ -7,7 +7,6 @@
 
 namespace Bex\Bbc;
 
-use Bitrix\Main\Context;
 use Bex\Bbc\Plugins\AjaxPlugin;
 use Bex\Bbc\Plugins\CachePlugin;
 use Bex\Bbc\Plugins\PluginManager;
@@ -134,9 +133,7 @@ abstract class BasisComponent extends \CBitrixComponent
      */
     public function isSearchRoute()
     {
-        $request = Context::getCurrent()->getRequest();
-
-        if (strlen($request->get('q')) > 0)
+        if (strlen($this->request->get('q')) > 0)
         {
             return true;
         }
@@ -182,7 +179,7 @@ abstract class BasisComponent extends \CBitrixComponent
                         $folder404 .= 'index.php';
                     }
 
-                    if ($folder404 != Context::getCurrent()->getRequest()->getRequestedPage())
+                    if ($folder404 != $this->request->getRequestedPage())
                     {
                         $this->return404();
                     }
