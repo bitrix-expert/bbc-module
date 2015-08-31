@@ -33,41 +33,20 @@ abstract class BasisComponent extends \CBitrixComponent
      * @var PluginManager
      */
     public $pluginManager;
-    /**
-     * @var CatcherPlugin
-     */
-    public $catcher;
-    /**
-     * @var IncluderPlugin
-     */
-    public $includer;
-    /**
-     * @var ParamsValidatorPlugin
-     */
-    public $paramsValidator;
-    /**
-     * @var AjaxPlugin
-     */
-    public $ajax;
-    /**
-     * @var CachePlugin
-     */
-    public $cache;
 
     public function configurate()
     {
-        $this->catcher = new CatcherPlugin();
-        $this->includer = new IncluderPlugin();
-        $this->paramsValidator = new ParamsValidatorPlugin();
-        $this->ajax = new AjaxPlugin();
-        $this->cache = new CachePlugin();
-
         $this->pluginManager
-            ->register($this->cache)
-            ->register($this->ajax)
-            ->register($this->catcher)
-            ->register($this->includer)
-            ->register($this->paramsValidator);
+            ->register(CachePlugin::className())
+            ->register(AjaxPlugin::className())
+            ->register(CatcherPlugin::className())
+            ->register(IncluderPlugin::className())
+            ->register(ParamsValidatorPlugin::className());
+    }
+
+    public function getPluginManager()
+    {
+        return $this->pluginManager;
     }
 
     /**
@@ -252,11 +231,10 @@ abstract class BasisComponent extends \CBitrixComponent
     {
         $this->pluginManager = new PluginManager($this);
 
+        $this->configurate();
         $this->initRouter();
 
         $this->pluginManager->trigger('executeInit');
-
-        $this->ajax->start();
 
         $this->pluginManager->trigger('beforeAction');
         $this->beforeAction();
@@ -266,8 +244,6 @@ abstract class BasisComponent extends \CBitrixComponent
 
         $this->afterAction();
         $this->pluginManager->trigger('afterAction');
-
-        $this->ajax->stop();
     }
 
     /**

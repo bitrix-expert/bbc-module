@@ -26,17 +26,18 @@ class PluginManager
      */
     private $pluginsByInterface;
 
+    private $isFirstTrigger = false;
+
     /**
      * @param BasisComponent $component
+     *
+     * @return PluginManager
      */
     public function __construct($component)
     {
         $this->component = $component;
 
-        $component->pluginManager = $this;
-        $component->configurate();
-
-        $this->prepare();
+        return $this;
     }
 
     /**
@@ -46,6 +47,12 @@ class PluginManager
      */
     public function trigger($action)
     {
+        if ($this->isFirstTrigger === true)
+        {
+            $this->prepare();
+            $this->isFirstTrigger = false;
+        }
+
         if (!empty($this->plugins))
         {
             foreach ($this->plugins as $instance)
@@ -85,22 +92,22 @@ class PluginManager
     }
 
     /**
-     * @param Plugin $plugin Object of plugin
+     * @param string $className Plugin class name instanceof \Bex\Bbc\Plugins\Plugin
      *
      * @return $this
      */
-    public function register($plugin)
+    public function register($className)
     {
-        if ($plugin instanceof Plugin)
+        if ($className instanceof Plugin)
         {
-            if (isset($this->plugins[$plugin::className()]))
+            if (isset($this->plugins[$className]))
             {
                 return $this;
             }
 
-            $this->plugins[$plugin::className()] = $plugin;
+            $plugin = new $className($this->component);
 
-            $plugin->init($this->component);
+            $this->plugins[$plugin] = $plugin;
 
             foreach ($plugin->dependencies() as $dependency)
             {

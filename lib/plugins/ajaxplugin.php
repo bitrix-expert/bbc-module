@@ -18,6 +18,16 @@ class AjaxPlugin extends Plugin implements AjaxInterface
      */
     protected $ajaxComponentIdSalt;
 
+    public function beforeAction()
+    {
+        $this->start();
+    }
+
+    public function afterAction()
+    {
+        $this->stop();
+    }
+
     /**
      * {@inheritdoc}
      */

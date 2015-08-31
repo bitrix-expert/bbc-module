@@ -56,8 +56,16 @@ abstract class Plugin
      */
     private $pluginManager;
 
-    final public function __construct()
+    /**
+     * Initialization of the plugin
+     *
+     * @param BasisComponent $component Component object
+     */
+    final public function __construct($component)
     {
+        $this->component = $component;
+
+        $this->configurate();
     }
 
     /**
@@ -68,18 +76,6 @@ abstract class Plugin
     public static function className()
     {
         return get_called_class();
-    }
-
-    /**
-     * Initialization of the plugin
-     *
-     * @param BasisComponent $component Component object
-     */
-    final public function init(BasisComponent $component)
-    {
-        $this->component = $component;
-
-        $this->configurate();
     }
 
     /**
@@ -150,6 +146,6 @@ abstract class Plugin
      */
     protected function getPlugin($plugin)
     {
-        return $this->component->pluginManager->get($plugin);
+        return $this->component->getPluginManager()->get($plugin);
     }
 }
