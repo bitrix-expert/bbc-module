@@ -32,11 +32,11 @@ abstract class BasisComponent extends \CBitrixComponent
     /**
      * @var PluginManager
      */
-    public $pluginManager;
+    private $pluginManager;
 
     public function configurate()
     {
-        $this->pluginManager
+        $this->getPluginManager()
             ->register(CachePlugin::className())
             ->register(AjaxPlugin::className())
             ->register(CatcherPlugin::className())
@@ -234,16 +234,16 @@ abstract class BasisComponent extends \CBitrixComponent
         $this->configurate();
         $this->initRouter();
 
-        $this->pluginManager->trigger('executeInit');
+        $this->getPluginManager()->trigger('executeInit');
 
-        $this->pluginManager->trigger('beforeAction');
+        $this->getPluginManager()->trigger('beforeAction');
         $this->beforeAction();
 
         $this->runAction();
-        $this->pluginManager->trigger('action');
+        $this->getPluginManager()->trigger('action');
 
         $this->afterAction();
-        $this->pluginManager->trigger('afterAction');
+        $this->getPluginManager()->trigger('afterAction');
     }
 
     /**
@@ -281,7 +281,12 @@ abstract class BasisComponent extends \CBitrixComponent
         }
         catch (\Exception $e)
         {
-            $this->catcher->catchException($e);
+            /**
+             * @var CatcherPlugin $catcher
+             */
+            $catcher = $this->getPluginManager()->get(CatcherPlugin::className());
+
+            $catcher->catchException($e);
         }
     }
 }

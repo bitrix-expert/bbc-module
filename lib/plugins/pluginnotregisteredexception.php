@@ -2,7 +2,7 @@
 
 namespace Bex\Bbc\Plugins;
 
-class PluginNotFoundException extends \Exception
+class PluginNotRegisteredException extends \Exception
 {
     protected $plugin;
 
@@ -10,11 +10,11 @@ class PluginNotFoundException extends \Exception
      * @param string $plugin
      * @param \Exception $previous
      */
-    public function __construct($message, $plugin, \Exception $previous = null)
+    public function __construct($plugin, \Exception $previous = null)
     {
         $this->plugin = $plugin;
 
-        parent::__construct($message, 0, $previous);
+        parent::__construct('Plugin ' . $plugin . ' is not defined', 0, $previous);
     }
 
     public function getPlugin()

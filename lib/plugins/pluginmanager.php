@@ -158,6 +158,8 @@ class PluginManager
      * @param string $plugin Name or interface of plugin
      *
      * @return Plugin|null
+     *
+     * @throws PluginNotRegisteredException If plugin is not registered
      */
     public function get($plugin)
     {
@@ -171,7 +173,7 @@ class PluginManager
         }
         else
         {
-            return null;
+            throw new PluginNotRegisteredException($plugin);
         }
     }
 }
