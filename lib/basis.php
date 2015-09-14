@@ -96,6 +96,7 @@ abstract class Basis extends \CBitrixComponent
     {
         $this->readUsedTraits();
         $this->includeModules();
+        $this->configurate();
         $this->checkAutomaticParams();
         $this->checkParams();
         $this->startAjax();

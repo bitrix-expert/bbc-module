@@ -163,6 +163,7 @@ abstract class BasisRouter extends \CBitrixComponent
     final public function executeBasis()
     {
         $this->includeModules();
+        $this->configurate();
         $this->checkAutomaticParams();
         $this->checkParams();
         $this->startAjax();

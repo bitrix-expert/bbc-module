@@ -89,6 +89,16 @@ trait Common
     }
 
     /**
+     * Configuration component before it is executed.
+     *
+     * Method called after includeModules(), before checkParams().
+     */
+    protected function configurate()
+    {
+
+    }
+
+    /**
      * @throws \Bitrix\Main\ArgumentNullException
      */
     private function checkAutomaticParams()
