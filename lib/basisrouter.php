@@ -57,7 +57,6 @@ abstract class BasisRouter extends \CBitrixComponent
         $this->defaultUrlTemplates404 = [
             'list' => '',
             'detail' => '#ELEMENT_ID#/'
-	    'smart_filter' => '#SECTION_CODE#/filter/#SMART_FILTER_PATH#/apply/'
         ];
 
         $this->componentVariables = ['ELEMENT_ID'];
@@ -89,11 +88,6 @@ abstract class BasisRouter extends \CBitrixComponent
         {
             $variables = [];
 
-            $engine = new \CComponentEngine($this);
-            $engine->addGreedyPart('#SECTION_CODE_PATH#');
-            $engine->addGreedyPart('#SMART_FILTER_PATH#');
-            $engine->setResolveCallback(array('CIBlockFindTools', 'resolveComponentEngine'));
-
             $urlTemplates = \CComponentEngine::MakeComponentUrlTemplates(
                 $this->defaultUrlTemplates404,
                 $this->arParams['SEF_URL_TEMPLATES']
@@ -104,13 +98,11 @@ abstract class BasisRouter extends \CBitrixComponent
                 $this->arParams['VARIABLE_ALIASES']
             );
 
-
-            $this->templatePage = $engine->guessComponentPath(
-		$this->arParams['SEF_FOLDER'],
-		$urlTemplates,
-		$variables
+            $this->templatePage = \CComponentEngine::ParseComponentPath(
+                $this->arParams['SEF_FOLDER'],
+                $urlTemplates,
+                $variables
             );
-
 
             if (!$this->templatePage)
             {
