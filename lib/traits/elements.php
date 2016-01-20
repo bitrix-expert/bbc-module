@@ -562,7 +562,7 @@ trait Elements
     {
         if (is_array($params) && !empty($params))
         {
-            $this->navStartParams = array_merge($this->navStartParams, $params);
+            $this->navStartParams = array_merge(is_array($this->navStartParams) ? $this->navStartParams : array(), $params);
         }
     }
 
