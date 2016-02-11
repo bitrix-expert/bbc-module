@@ -548,7 +548,7 @@ trait Elements
     {
         if (is_array($fields) && !empty($fields))
         {
-            $this->groupingParams = array_merge($this->groupingParams, $fields);
+            $this->groupingParams = array_merge(is_array($this->groupingParams) ? $this->groupingParams : [], $fields);
         }
     }
 
