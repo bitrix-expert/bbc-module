@@ -99,74 +99,74 @@ trait Common
     }
 
     /**
-     * @throws \Bitrix\Main\ArgumentNullException
+     * @throws \Bitrix\Main\ArgumentException
      */
     private function checkAutomaticParams()
-    {
-        foreach ($this->checkParams as $key => $params)
-        {
-            $exception = false;
+	{
+		try
+		{
+			foreach ($this->checkParams as $key => $params)
+			{
+				switch ($params['type'])
+				{
+					case 'int':
 
-            switch ($params['type'])
-            {
-                case 'int':
+						if (!is_numeric($this->arParams[$key]) && $params['error'] !== false)
+						{
+							throw new Main\ArgumentTypeException($key, 'integer');
+						}
+						else
+						{
+							$this->arParams[$key] = intval($this->arParams[$key]);
+						}
 
-                    if (!is_numeric($this->arParams[$key]) && $params['error'] !== false)
-                    {
-                        $exception = new Main\ArgumentTypeException($key, 'integer');
-                    }
-                    else
-                    {
-                        $this->arParams[$key] = intval($this->arParams[$key]);
-                    }
+						break;
 
-                break;
+					case 'string':
 
-                case 'string':
+						$this->arParams[$key] = htmlspecialchars(trim($this->arParams[$key]));
 
-                    $this->arParams[$key] = htmlspecialchars(trim($this->arParams[$key]));
+						if (strlen($this->arParams[$key]) <= 0 && $params['error'] !== false)
+						{
+							throw new Main\ArgumentNullException($key);
+						}
 
-                    if (strlen($this->arParams[$key]) <= 0 && $params['error'] !== false)
-                    {
-                        $exception = new Main\ArgumentNullException($key);
-                    }
+						break;
 
-                break;
+					case 'array':
 
-                case 'array':
+						if (!is_array($this->arParams[$key]))
+						{
+							if ($params['error'] === false)
+							{
+								$this->arParams[$key] = array($this->arParams[$key]);
+							}
+							else
+							{
+								throw new Main\ArgumentTypeException($key, 'array');
+							}
+						}
 
-                    if (!is_array($this->arParams[$key]))
-                    {
-                        if ($params['error'] === false)
-                        {
-                            $this->arParams[$key] = array($this->arParams[$key]);
-                        }
-                        else
-                        {
-                            $exception = new Main\ArgumentTypeException($key, 'array');
-                        }
-                    }
+						break;
 
-                break;
+					default:
 
-                default:
-                    $exception = new Main\NotSupportedException('Not supported type of parameter for automatical checking');
-                break;
-            }
-
-            if ($exception)
-            {
-                if ($this->checkParams[$key]['error'] === '404')
-                {
-                    $this->return404(true, $exception);
-                }
-                else
-                {
-                    throw $exception;
-                }
-            }
-        }
-    }
+						throw new Main\ArgumentTypeException($key);
+				}
+			}
+		}
+		catch (Main\ArgumentException $exception)
+		{
+			if ($this->checkParams[$exception->getParameter()]['error'] === '404')
+			{
+				$this->return404(true, $exception);
+			}
+			else
+			{
+				throw $exception;
+			}
+		}
+	}
 
     /**
      * Checking required component params
