@@ -71,23 +71,17 @@ abstract class Basis extends \CBitrixComponent
     {
         if ($this->traitsAutoExecute)
         {
-            $reflection = new \ReflectionClass(get_called_class());
-
-            $parentClass = $reflection;
-
-            while (1)
+            $calledClass = get_called_class();
+            
+            $classes = class_parents($calledClass);
+            $classes[] = $calledClass;
+            
+            foreach ($classes as $class)
             {
-                foreach ($parentClass->getTraitNames() as $trait)
+                foreach (class_uses($class) as $trait)
                 {
                     $this->usedTraits[$trait] = bx_basename($trait);
                 }
-
-                if ($parentClass->name === __CLASS__)
-                {
-                    break;
-                }
-
-                $parentClass = $parentClass->getParentClass();
             }
         }
     }
