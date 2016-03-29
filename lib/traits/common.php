@@ -481,7 +481,8 @@ trait Common
             strlen($this->arParams['AJAX_COMPONENT_ID']) > 0
             && strlen($this->arParams['AJAX_PARAM_NAME']) > 0
             && $_REQUEST[$this->arParams['AJAX_PARAM_NAME']] === $this->arParams['AJAX_COMPONENT_ID']
-            && Main\Context::getCurrent()->getRequest()->isAjaxRequest()
+            && isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])) === 'xmlhttprequest'
         {
             return true;
         }
