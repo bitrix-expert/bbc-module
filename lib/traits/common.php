@@ -313,6 +313,10 @@ trait Common
     {
         if ($this->isAjax() && $this->arParams['USE_AJAX'] === 'Y')
         {
+            global $APPLICATION;
+            
+            $APPLICATION->FinalActions();
+            
             exit;
         }
     }
@@ -349,7 +353,11 @@ trait Common
      */
     public function return404($notifier = false, \Exception $exception = null)
     {
-        @define('ERROR_404', 'Y');
+    	if (!defined('ERROR_404'))
+    	{
+    	    define('ERROR_404', 'Y');
+    	}
+
         \CHTTP::SetStatus('404 Not Found');
 
         if ($exception !== false)
@@ -474,7 +482,8 @@ trait Common
             && strlen($this->arParams['AJAX_PARAM_NAME']) > 0
             && $_REQUEST[$this->arParams['AJAX_PARAM_NAME']] === $this->arParams['AJAX_COMPONENT_ID']
             && isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']))
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+        )
         {
             return true;
         }
