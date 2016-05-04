@@ -14,7 +14,7 @@ class PluginNotRegisteredException extends \Exception
     {
         $this->plugin = $plugin;
 
-        parent::__construct('Plugin ' . $plugin . ' is not defined', 0, $previous);
+        parent::__construct('Plugin "' . $plugin . '" is not defined', 0, $previous);
     }
 
     public function getPlugin()

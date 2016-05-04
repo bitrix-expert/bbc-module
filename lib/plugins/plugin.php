@@ -51,10 +51,6 @@ abstract class Plugin
      * @var BasisComponent
      */
     protected $component;
-    /**
-     * @var PluginManager
-     */
-    private $pluginManager;
 
     /**
      * Initialization of the plugin
@@ -146,6 +142,6 @@ abstract class Plugin
      */
     protected function getPlugin($plugin)
     {
-        return $this->component->getPluginManager()->get($plugin);
+        return $this->component->getDispatcher()->get($plugin);
     }
 }

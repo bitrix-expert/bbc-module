@@ -10,11 +10,11 @@ namespace Bex\Bbc\Plugins;
 use Bex\Bbc\BasisComponent;
 
 /**
- * Plugin Manager
+ * Dispatcher plugins of component.
  *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-class PluginManager
+class PluginDispatcher
 {
     protected $component;
     /**
@@ -26,14 +26,14 @@ class PluginManager
      */
     private $pluginsByInterface;
 
-    private $isFirstTrigger = false;
+    private $isFirstTrigger = true;
 
     /**
      * @param BasisComponent $component
      *
-     * @return PluginManager
+     * @return PluginDispatcher
      */
-    public function __construct($component)
+    public function __construct(BasisComponent $component)
     {
         $this->component = $component;
 
@@ -49,65 +49,76 @@ class PluginManager
     {
         if ($this->isFirstTrigger === true)
         {
-            $this->prepare();
+            $this->loadConfiguration();
             $this->isFirstTrigger = false;
         }
 
         if (!empty($this->plugins))
         {
-            foreach ($this->plugins as $instance)
+            foreach ($this->plugins as $plugin)
             {
-                if (method_exists($instance, $action))
+                if (method_exists($plugin, $action))
                 {
-                    call_user_func($instance->$action());
+                    $plugin->$action();
                 }
             }
         }
     }
-
-    /**
-     * Preparatory operations after register of plugins
-     */
-    private function prepare()
+    
+    protected function loadConfiguration()
     {
-        usort($this->plugins, function($previous, $next) {
-            /**
-             * @var Plugin $previous
-             * @var Plugin $next
-             */
+        $plugins = $this->component->plugins();
+        
+        if (!is_array($plugins) || empty($plugins))
+        {
+            return;
+        }
+        
+        foreach ($plugins as $name => $className)
+        {
+            $this->register($name, $className);
+        }
 
-            if ($previous->getSort() === $next->getSort())
-            {
-                return 0;
-            }
-            elseif ($previous->getSort() < $next->getSort())
-            {
-                return -1;
-            }
-            else
-            {
-                return 1;
-            }
-        });
+// @todo сортировка должна сохранять ключи
+//        usort($this->plugins, function($previous, $next) {
+//            /**
+//             * @var Plugin $previous
+//             * @var Plugin $next
+//             */
+//
+//            if ($previous->getSort() === $next->getSort())
+//            {
+//                return 0;
+//            }
+//            elseif ($previous->getSort() < $next->getSort())
+//            {
+//                return -1;
+//            }
+//            else
+//            {
+//                return 1;
+//            }
+//        });
     }
 
     /**
-     * @param string $className Plugin class name instanceof \Bex\Bbc\Plugins\Plugin
+     * @param string $name Plugin name.
+     * @param string $className Plugin class name instanceof `\Bex\Bbc\Plugins\Plugin`.
      *
      * @return $this
      */
-    public function register($className)
+    public function register($name, $className)
     {
-        if ($className instanceof Plugin)
+        if (is_subclass_of($className, Plugin::className()))
         {
-            if (isset($this->plugins[$className]))
+            if (isset($this->plugins[$name]))
             {
                 return $this;
             }
 
             $plugin = new $className($this->component);
 
-            $this->plugins[$plugin] = $plugin;
+            $this->plugins[$name] = $plugin;
 
             foreach ($plugin->dependencies() as $dependency)
             {
@@ -127,13 +138,13 @@ class PluginManager
     /**
      * Delete plugin from component
      *
-     * @param string $pluginName Name of class for delete plugin. Can be used method getClass: PluginClass::getClass()
+     * @param string $name Name of class for delete plugin. Can be used method getClass: PluginClass::getClass()
      *
      * @return $this
      */
-    public function remove($pluginName)
+    public function remove($name)
     {
-        unset($this->plugins[$pluginName]);
+        unset($this->plugins[$name]);
 
         return $this;
     }
@@ -155,25 +166,25 @@ class PluginManager
      * $plugin = $this->pluginManager->get(IncluderPlugin::className());
      * ```
      *
-     * @param string $plugin Name or interface of plugin
+     * @param string $name Name or interface of plugin
      *
      * @return Plugin|null
      *
      * @throws PluginNotRegisteredException If plugin is not registered
      */
-    public function get($plugin)
+    public function get($name)
     {
-        if (isset($this->pluginsByInterface[$plugin]))
+        if (isset($this->pluginsByInterface[$name]))
         {
-            return $this->pluginsByInterface[$plugin];
+            return $this->pluginsByInterface[$name];
         }
-        elseif (isset($this->plugins[$plugin]))
+        elseif (isset($this->plugins[$name]))
         {
-            return $this->plugins[$plugin];
+            return $this->plugins[$name];
         }
         else
         {
-            throw new PluginNotRegisteredException($plugin);
+            throw new PluginNotRegisteredException($name);
         }
     }
 }

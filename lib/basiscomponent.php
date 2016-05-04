@@ -7,12 +7,7 @@
 
 namespace Bex\Bbc;
 
-use Bex\Bbc\Plugins\AjaxPlugin;
-use Bex\Bbc\Plugins\CachePlugin;
-use Bex\Bbc\Plugins\PluginManager;
-use Bex\Bbc\Plugins\IncluderPlugin;
-use Bex\Bbc\Plugins\CatcherPlugin;
-use Bex\Bbc\Plugins\ParamsValidatorPlugin;
+use Bex\Bbc\Plugins\PluginDispatcher;
 
 /**
  * Abstraction basis component
@@ -30,23 +25,34 @@ abstract class BasisComponent extends \CBitrixComponent
      */
     public $action;
     /**
-     * @var PluginManager
+     * @var PluginDispatcher
      */
-    private $pluginManager;
+    private $pluginDispatcher;
+
+    public function plugins()
+    {
+        return [
+            'cache' => '\Bex\Bbc\Plugins\CachePlugin',
+            'ajax' => '\Bex\Bbc\Plugins\AjaxPlugin',
+            'catcher' => '\Bex\Bbc\Plugins\CatcherPlugin',
+            'includer' => '\Bex\Bbc\Plugins\IncluderPlugin',
+            'paramsValidator' => '\Bex\Bbc\Plugins\ParamsValidatorPlugin'
+        ];
+    }
 
     public function configurate()
     {
-        $this->getPluginManager()
-            ->register(CachePlugin::className())
-            ->register(AjaxPlugin::className())
-            ->register(CatcherPlugin::className())
-            ->register(IncluderPlugin::className())
-            ->register(ParamsValidatorPlugin::className());
+        
     }
 
-    public function getPluginManager()
+    public function getDispatcher()
     {
-        return $this->pluginManager;
+        return $this->pluginDispatcher;
+    }
+    
+    public function getPlugin($name)
+    {
+        return $this->getDispatcher()->get($name);
     }
 
     /**
@@ -229,21 +235,21 @@ abstract class BasisComponent extends \CBitrixComponent
 
     final protected function executeBasis()
     {
-        $this->pluginManager = new PluginManager($this);
+        $this->pluginDispatcher = new PluginDispatcher($this);
 
         $this->configurate();
         $this->initRouter();
 
-        $this->getPluginManager()->trigger('executeInit');
+        $this->getDispatcher()->trigger('executeInit');
 
-        $this->getPluginManager()->trigger('beforeAction');
+        $this->getDispatcher()->trigger('beforeAction');
         $this->beforeAction();
 
         $this->runAction();
-        $this->getPluginManager()->trigger('action');
+        $this->getDispatcher()->trigger('action');
 
         $this->afterAction();
-        $this->getPluginManager()->trigger('afterAction');
+        $this->getDispatcher()->trigger('afterAction');
     }
 
     /**
@@ -276,17 +282,6 @@ abstract class BasisComponent extends \CBitrixComponent
 
     public function executeComponent()
     {
-        try {
-            $this->executeBasis();
-        }
-        catch (\Exception $e)
-        {
-            /**
-             * @var CatcherPlugin $catcher
-             */
-            $catcher = $this->getPluginManager()->get(CatcherPlugin::className());
-
-            $catcher->catchException($e);
-        }
+        $this->executeBasis();
     }
 }
