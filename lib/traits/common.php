@@ -74,7 +74,7 @@ trait Common
      */
     public function includeModules()
     {
-        if (empty($this->needModules))
+        if (!is_array($this->needModules) || empty($this->needModules))
         {
             return false;
         }
