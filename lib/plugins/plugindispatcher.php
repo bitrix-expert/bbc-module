@@ -17,15 +17,7 @@ use Bex\Bbc\BasisComponent;
 class PluginDispatcher
 {
     protected $component;
-    /**
-     * @var array
-     */
     private $plugins;
-    /**
-     * @var array
-     */
-    private $pluginsByInterface;
-
     private $isFirstTrigger = true;
 
     /**
@@ -47,35 +39,29 @@ class PluginDispatcher
      */
     public function trigger($action)
     {
-        if ($this->isFirstTrigger === true)
-        {
+        if ($this->isFirstTrigger === true) {
             $this->loadConfiguration();
             $this->isFirstTrigger = false;
         }
 
-        if (!empty($this->plugins))
-        {
-            foreach ($this->plugins as $plugin)
-            {
-                if (method_exists($plugin, $action))
-                {
+        if (!empty($this->plugins)) {
+            foreach ($this->plugins as $plugin) {
+                if (method_exists($plugin, $action)) {
                     $plugin->$action();
                 }
             }
         }
     }
-    
+
     protected function loadConfiguration()
     {
         $plugins = $this->component->plugins();
-        
-        if (!is_array($plugins) || empty($plugins))
-        {
+
+        if (!is_array($plugins) || empty($plugins)) {
             return;
         }
-        
-        foreach ($plugins as $name => $className)
-        {
+
+        foreach ($plugins as $name => $className) {
             $this->register($name, $className);
         }
 
@@ -109,27 +95,25 @@ class PluginDispatcher
      */
     public function register($name, $className)
     {
-        if (is_subclass_of($className, Plugin::className()))
-        {
-            if (isset($this->plugins[$name]))
-            {
+        if (!class_exists($className)) {
+            throw new \InvalidArgumentException('Plugin "' . $name . '" not found');
+        } elseif (is_subclass_of($className, Plugin::className())) {
+            if (isset($this->plugins[$name])) {
                 return $this;
             }
 
+            /**
+             * @var Plugin $plugin
+             */
             $plugin = new $className($this->component);
 
             $this->plugins[$name] = $plugin;
 
-            foreach ($plugin->dependencies() as $dependency)
-            {
+            foreach ($plugin->dependencies() as $dependency) {
                 $this->register($dependency);
             }
-
-            $this->pluginsByInterface[$plugin->getInterface()] = &$plugin;
-        }
-        else
-        {
-            throw new \InvalidArgumentException('Plugin not instanceof \Bex\Bbc\Plugins\Plugin');
+        } else {
+            throw new \InvalidArgumentException('Plugin "' . $name . '" isn\'t instanceof \Bex\Bbc\Plugins\Plugin');
         }
 
         return $this;
@@ -150,40 +134,28 @@ class PluginDispatcher
     }
 
     /**
-     * Get plugin object by his name or interface.
+     * Get plugin object by his name.
      *
      * For example:
      *
      * ```php
-     * // by interface
-     * use Bex\Bbc\Plugins\PluginInterface;
-     *
-     * $plugin = $this->pluginManager->get(PluginInterface::CACHE);
-     *
      * // by class name
      * use Bex\Bbc\Plugins\IncluderPlugin;
      *
      * $plugin = $this->pluginManager->get(IncluderPlugin::className());
      * ```
      *
-     * @param string $name Name or interface of plugin
+     * @param string $name Name of plugin.
      *
      * @return Plugin|null
      *
-     * @throws PluginNotRegisteredException If plugin is not registered
+     * @throws PluginNotRegisteredException If plugin is not registered.
      */
     public function get($name)
     {
-        if (isset($this->pluginsByInterface[$name]))
-        {
-            return $this->pluginsByInterface[$name];
-        }
-        elseif (isset($this->plugins[$name]))
-        {
+        if (isset($this->plugins[$name])) {
             return $this->plugins[$name];
-        }
-        else
-        {
+        } else {
             throw new PluginNotRegisteredException($name);
         }
     }

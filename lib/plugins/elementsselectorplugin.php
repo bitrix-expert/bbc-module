@@ -13,7 +13,7 @@ namespace Bex\Bbc\Plugins;
  * @todo Add .parameters.php
  * @todo Rename plugin
  */
-class ElementsParamsPlugin extends Plugin
+class ElementsSelectorPlugin extends Plugin
 {
     /**
      * @var array|bool Group parameters for \CIBlockElement::GetList()

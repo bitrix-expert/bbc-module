@@ -12,7 +12,6 @@ namespace Bex\Bbc\Plugins;
  */
 class AjaxPlugin extends Plugin implements AjaxInterface
 {
-    private $interface = PluginInterface::AJAX;
     /**
      * @var string Salt for component ID for AJAX request
      */
@@ -35,18 +34,15 @@ class AjaxPlugin extends Plugin implements AjaxInterface
     {
         global $APPLICATION;
 
-        if ($this->component->arParams['USE_AJAX'] !== 'Y')
-        {
+        if ($this->component->arParams['USE_AJAX'] !== 'Y') {
             return false;
         }
 
-        if (strlen($this->component->arParams['AJAX_PARAM_NAME']) <= 0)
-        {
+        if (strlen($this->component->arParams['AJAX_PARAM_NAME']) <= 0) {
             $this->component->arParams['AJAX_PARAM_NAME'] = 'compid';
         }
 
-        if (strlen($this->component->arParams['AJAX_COMPONENT_ID']) <= 0)
-        {
+        if (strlen($this->component->arParams['AJAX_COMPONENT_ID']) <= 0) {
             $this->component->arParams['AJAX_COMPONENT_ID'] = \CAjax::GetComponentID(
                 $this->component->getName(),
                 $this->component->getTemplateName(),
@@ -54,24 +50,18 @@ class AjaxPlugin extends Plugin implements AjaxInterface
             );
         }
 
-        if ($this->isAjax())
-        {
-            if ($this->component->arParams['AJAX_HEAD_RELOAD'] === 'Y')
-            {
+        if ($this->isAjax()) {
+            if ($this->component->arParams['AJAX_HEAD_RELOAD'] === 'Y') {
                 $APPLICATION->ShowAjaxHead();
-            }
-            else
-            {
+            } else {
                 $APPLICATION->RestartBuffer();
             }
 
-            if ($this->component->arParams['AJAX_TYPE'] === 'JSON')
-            {
+            if ($this->component->arParams['AJAX_TYPE'] === 'JSON') {
                 header('Content-Type: application/json');
             }
 
-            if (strlen($this->component->arParams['AJAX_TEMPLATE_PAGE']) > 0)
-            {
+            if (strlen($this->component->arParams['AJAX_TEMPLATE_PAGE']) > 0) {
                 $this->templatePage = basename($this->component->arParams['AJAX_TEMPLATE_PAGE']);
             }
         }
@@ -82,8 +72,7 @@ class AjaxPlugin extends Plugin implements AjaxInterface
      */
     public function stop()
     {
-        if ($this->isAjax() && $this->component->arParams['USE_AJAX'] === 'Y')
-        {
+        if ($this->isAjax() && $this->component->arParams['USE_AJAX'] === 'Y') {
             exit;
         }
     }
@@ -98,8 +87,8 @@ class AjaxPlugin extends Plugin implements AjaxInterface
             && strlen($this->component->arParams['AJAX_PARAM_NAME']) > 0
             && $_REQUEST[$this->component->arParams['AJAX_PARAM_NAME']] === $this->component->arParams['AJAX_COMPONENT_ID']
             && isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']))
-        {
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])
+        ) {
             return true;
         }
 
@@ -109,10 +98,10 @@ class AjaxPlugin extends Plugin implements AjaxInterface
     public function action()
     {
         if (strlen($this->component->arParams['AJAX_PARAM_NAME']) > 0
-            && strlen($this->component->arParams['AJAX_COMPONENT_ID']) > 0)
-        {
+            && strlen($this->component->arParams['AJAX_COMPONENT_ID']) > 0
+        ) {
             $this->component->arResult['AJAX_REQUEST_PARAMS'] =
-                $this->component->arParams['AJAX_PARAM_NAME'] . '='. $this->component->arParams['AJAX_COMPONENT_ID'];
+                $this->component->arParams['AJAX_PARAM_NAME'] . '=' . $this->component->arParams['AJAX_COMPONENT_ID'];
 
             $this->component->setResultCacheKeys(['AJAX_REQUEST_PARAMS']);
         }

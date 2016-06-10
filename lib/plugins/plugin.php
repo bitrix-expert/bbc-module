@@ -8,7 +8,6 @@
 namespace Bex\Bbc\Plugins;
 
 use Bex\Bbc\BasisComponent;
-use Bitrix\Main\ArgumentTypeException;
 
 /**
  * Abstract class for plugin realization.
@@ -42,11 +41,7 @@ abstract class Plugin
     /**
      * @var int Sorting plugin. Determines the order of plugins execution
      */
-    private $sort = 100;
-    /**
-     * @var string Type interface of plugin. Takes the value of the \Bex\Bbc\Plugins\PluginInterface
-     */
-    private $interface = PluginInterface::TYPICAL;
+    private $pluginSort = 100;
     /**
      * @var BasisComponent
      */
@@ -86,9 +81,9 @@ abstract class Plugin
      *
      * @param int $sort
      */
-    public function setSort($sort)
+    public function setPluginSort($sort)
     {
-        $this->sort = intval($sort);
+        $this->pluginSort = intval($sort);
     }
 
     /**
@@ -96,36 +91,9 @@ abstract class Plugin
      *
      * @return int
      */
-    public function getSort()
+    public function getPluginSort()
     {
-        return $this->sort;
-    }
-
-    /**
-     * Sets interface for the plugin
-     *
-     * @param string $interface Interface of plugin. One of constant \Bex\Bbc\Plugins\PluginInterface
-     *
-     * @throws ArgumentTypeException If $interface not string
-     */
-    public function setInterface($interface)
-    {
-        if (!is_string($interface))
-        {
-            throw new ArgumentTypeException('Type of the plugin must be string');
-        }
-
-        $this->interface = $interface;
-    }
-
-    /**
-     * Gets current interface of the plugin
-     *
-     * @return string
-     */
-    public function getInterface()
-    {
-        return $this->interface;
+        return $this->pluginSort;
     }
 
     public function dependencies()
