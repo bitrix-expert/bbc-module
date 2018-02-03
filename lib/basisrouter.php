@@ -31,12 +31,12 @@ abstract class BasisRouter extends \CBitrixComponent
     /**
      * @var string Template page default
      */
-    protected $defaultPage = 'list';
+    protected $defaultPage = 'section';
 
     /**
      * @var string Template page default for SEF mode
      */
-    protected $defaultSefPage = 'list';
+    protected $defaultSefPage = 'section';
 
     /**
      * @var string Value of the parameter `SEF_FOLDER`
@@ -55,7 +55,7 @@ abstract class BasisRouter extends \CBitrixComponent
     protected function setSefDefaultParams()
     {
         $this->defaultUrlTemplates404 = [
-            'list' => '',
+            'section' => '',
             'detail' => '#ELEMENT_ID#/'
         ];
 
