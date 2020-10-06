@@ -368,7 +368,7 @@ trait Elements
     {
         global $APPLICATION;
 
-        if ($this->arParams['ADD_SECTIONS_CHAIN'] && is_array($this->arResult['SECTION']))
+        if ($this->arParams['ADD_SECTIONS_CHAIN'] === 'Y' && is_array($this->arResult['SECTION']))
         {
             foreach ($this->arResult['SECTION']['PATH'] as $path)
             {
